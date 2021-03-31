@@ -178,7 +178,7 @@ $(document).ready(function(e) {
 							// setTimeout(function(){
 							// 	var info__ = {
 							// 		'type':2,
-							// 		'email':$('#wmGuesscardInput').val(),
+							// 		'uid':$('#wmGuesscardInput').val(),
 							// 		'cardID':'',
 							// 		'rememberPass':'',
 							// 		'password':'',
@@ -524,7 +524,6 @@ $(document).ready(function(e) {
 						}
 						
 					}
-					//$('#wmGetPassword').attr('data-email',$('#wmBouerseInput').val());
 					var inputValueWindow = index;
 					{
 							var wmUid = $('#wmBouerseInput').val();
@@ -600,69 +599,68 @@ $(document).ready(function(e) {
 			}
 		});
 	}
-	$('#wmRememberEmail').on('click',function(){
-		if($(this).hasClass('active')){
-			$(this).removeClass('active');
-		}else{
-			$(this).addClass('active');
-		}
-	});
-	$('#wmRememberPass').on('click',function(){
-		if($(this).hasClass('active')){
-			$(this).removeClass('active');
-		}else{
-			$(this).addClass('active');
-		}
-	});
+	// $('#wmRememberEmail').on('click',function(){
+	// 	if($(this).hasClass('active')){
+	// 		$(this).removeClass('active');
+	// 	}else{
+	// 		$(this).addClass('active');
+	// 	}
+	// });
+	// $('#wmRememberPass').on('click',function(){
+	// 	if($(this).hasClass('active')){
+	// 		$(this).removeClass('active');
+	// 	}else{
+	// 		$(this).addClass('active');
+	// 	}
+	// });
 	// 设置默认密码
-	function wmSetDefaultPassWord(passWord){
-		$('#wmPassword').val(passWord);
-		localStorage.setItem("wmSetDefaultMaillPassWord", passWord);
-		$('#wmRememberPass').addClass('active');
-	};
-	function wmDelDefaultMaillPassWord(){
-		localStorage.removeItem("wmSetDefaultMaillPassWord");
-	}
-	function wmSetStoragePassWord(){
-		var wmStorangePassWord = localStorage.getItem("wmSetDefaultMaillPassWord");
-		if(wmStorangePassWord!=null&&wmStorangePassWord!=undefined&&wmStorangePassWord!=''){
-			wmSetDefaultPassWord(wmStorangePassWord);
-		}
-	}
+	// function wmSetDefaultPassWord(passWord){
+	// 	$('#wmPassword').val(passWord);
+	// 	localStorage.setItem("wmSetDefaultMaillPassWord", passWord);
+	// 	$('#wmRememberPass').addClass('active');
+	// };
+	// function wmDelDefaultMaillPassWord(){
+	// 	localStorage.removeItem("wmSetDefaultMaillPassWord");
+	// }
+	// function wmSetStoragePassWord(){
+	// 	var wmStorangePassWord = localStorage.getItem("wmSetDefaultMaillPassWord");
+	// 	if(wmStorangePassWord!=null&&wmStorangePassWord!=undefined&&wmStorangePassWord!=''){
+	// 		wmSetDefaultPassWord(wmStorangePassWord);
+	// 	}
+	// }
 	//设置默认uid
 	function wmSetDefaultMaillAddress(mailAddr){
 		$('#wm_card_uid').val(mailAddr);
 		$('#wmDeminingInput').val(mailAddr);
 		$('#wmStarSearchInput').val(mailAddr);
 		$('#wmCardMixInput').val(mailAddr);
-		$('#wm_tiaozhan_email').val(mailAddr);
+		$('#wm_tiaozhan_uid').val(mailAddr);
 		$('#wmBouerseInput').val(mailAddr);
 		$('#wmGuesscardInput').val(mailAddr);
 		localStorage.setItem("wmSetDefaultMaillAddress", mailAddr);
-		$('#wmRememberEmail').addClass('active');
+		//$('#wmRememberEmail').addClass('active');
 	}
 	function wmDelDefaultMaillAddress(){
 		$('#wmDeminingInput').val('');
 		$('#wmStarSearchInput').val('');
 		$('#wmCardMixInput').val('');
-		$('#wm_tiaozhan_email').val('');
+		//$('#wm_tiaozhan_uid').val('');
 		$('#wmBouerseInput').val('');
 		$('#wmGuesscardInput').val('');
 		localStorage.removeItem("wmSetDefaultMaillAddress");
 	}
-	function wmSetsessionStorageMail(){
-		var wmSetsessionStorageMailCache = localStorage.getItem("wmSetDefaultMaillAddress");
-		if(wmSetsessionStorageMailCache!=null&&wmSetsessionStorageMailCache!=undefined&&wmSetsessionStorageMailCache!=''){
-			wmSetDefaultMaillAddress(wmSetsessionStorageMailCache);
-		}
-	}
+	// function wmSetsessionStorageMail(){
+	// 	var wmSetsessionStorageMailCache = localStorage.getItem("wmSetDefaultMaillAddress");
+	// 	if(wmSetsessionStorageMailCache!=null&&wmSetsessionStorageMailCache!=undefined&&wmSetsessionStorageMailCache!=''){
+	// 		wmSetDefaultMaillAddress(wmSetsessionStorageMailCache);
+	// 	}
+	// }
 	// 判断是否有缓存地址
-	wmSetsessionStorageMail();
+	//wmSetsessionStorageMail();
 	// 判断是否保存密码
-	wmSetStoragePassWord();
+	// wmSetStoragePassWord();
 	// 挖星星
 	function getwmStarDemMap(){
-
 		var wmCardStarpath_ = wmCardPluginpath + 'wm_game_demining.php';
 		$('#wmCardLoading').stop(true, false).fadeIn(100);
 		$.ajax({
@@ -710,7 +708,7 @@ $(document).ready(function(e) {
 		}
 		for(var k=0;k<result.player.length;k++){
 			var wmEemXY = result.player[k].xy;
-			var wmEMHTML = '<img class="wm_demining_img" src="https://cdn.v2ex.com/gravatar/'+result.player[k].emailMD5+'?s=100&d=mm&r=g&d=robohash" width="50" height="50" />';
+			var wmEMHTML = '<img class="wm_demining_img" src="https://cdn.v2ex.com/gravatar/'+result.player[k].uidMD5+'?s=100&d=mm&r=g&d=robohash" width="50" height="50" />';
 			$('.wm_demining_item[data-xy="'+wmEemXY+'"]').append(wmEMHTML);
 		}
 	}
@@ -723,7 +721,7 @@ $(document).ready(function(e) {
 					layer.alert("wmDeminingBodyuid不能为空");
 			　　　　return false;
 			　　}else{
-					function getPasswordAndDem(ticket,randstr){
+					function getUidAndDem(ticket,randstr){
 						console.log($('#clicaptcha-submit-info').val());
 						var wmCardStarpath_ = wmCardPluginpath + 'wm_game_demining.php';
 						$('#wmCardLoading').stop(true, false).fadeIn(100);
@@ -791,7 +789,7 @@ $(document).ready(function(e) {
 								// res（未通过验证）= {ret: 1, ticket: null}
 								// res（验证成功） = {ret: 0, ticket: "String", randstr: "String"}
 								if(res.ret === 0){
-									getPasswordAndDem(res.ticket,res.randstr);
+									getUidAndDem(res.ticket,res.randstr);
 								}else{
 									layer.alert('验证失败！');
 								}
@@ -803,11 +801,11 @@ $(document).ready(function(e) {
 							// 	success_tip: '验证成功！',
 							// 	error_tip: '未点中正确区域，请重试！',
 							// 	callback: function(){
-							// 		getPasswordAndDem();
+							// 		getUidAndDem();
 							// 	}
 							// });
 						}else{
-							getPasswordAndDem();
+							getUidAndDem();
 						}
 					}
 					var deminingTime = Number(localStorage.getItem("demining" + md5(wmUid)));
@@ -873,7 +871,7 @@ $(document).ready(function(e) {
 						}else{
 							rank_ = rank_ + 'th';
 						}
-						html_ = '<div class="clearfix wm_card_rank_box" title="查看TA的卡牌"><div class="fl wm_card_rank_text">'+rank_+'</div><div class="fl wm_card_rank_img"><img class="wm_card_get_list_avatar_pic" src="https://cdn.v2ex.com/gravatar/'+result.score[i].email+'?s=100&amp;d=mm&amp;r=g&amp;d=robohash" width="45" height="45" data-md5="'+result.score[i].email+'"></div><div class="fr wm_card_rank_point">'+result.score[i].score+'点</div></div>';
+						html_ = '<div class="clearfix wm_card_rank_box" title="查看TA的卡牌"><div class="fl wm_card_rank_text">'+rank_+'</div><div class="fl wm_card_rank_img"><img class="wm_card_get_list_avatar_pic" src="https://cdn.v2ex.com/gravatar/'+result.score[i].uid+'?s=100&amp;d=mm&amp;r=g&amp;d=robohash" width="45" height="45" data-md5="'+result.score[i].uid+'"></div><div class="fr wm_card_rank_point">'+result.score[i].score+'点</div></div>';
 						if(i<=4){
 							$('#wmScoreRankBox .wm_card_rank_list').append(html_);
 						}else{
@@ -892,7 +890,7 @@ $(document).ready(function(e) {
 						}else{
 							rank_ = rank_ + 'th';
 						}
-						html_ = '<div class="clearfix wm_card_rank_box" title="查看TA的卡牌"><div class="fl wm_card_rank_text">'+rank_+'</div><div class="fl wm_card_rank_img"><img class="wm_card_get_list_avatar_pic" src="https://cdn.v2ex.com/gravatar/'+result.level[i].email+'?s=100&amp;d=mm&amp;r=g&amp;d=robohash" width="45" height="45" data-md5="'+result.level[i].email+'"></div><div class="fr wm_card_rank_point">'+result.level[i].level+'级</div></div>';
+						html_ = '<div class="clearfix wm_card_rank_box" title="查看TA的卡牌"><div class="fl wm_card_rank_text">'+rank_+'</div><div class="fl wm_card_rank_img"><img class="wm_card_get_list_avatar_pic" src="https://cdn.v2ex.com/gravatar/'+result.level[i].uid+'?s=100&amp;d=mm&amp;r=g&amp;d=robohash" width="45" height="45" data-md5="'+result.level[i].uid+'"></div><div class="fr wm_card_rank_point">'+result.level[i].level+'级</div></div>';
 						if(i<=4){
 							$('#wmLevelRankBox .wm_card_rank_list').append(html_);
 						}else{
@@ -911,7 +909,7 @@ $(document).ready(function(e) {
 						}else{
 							rank_ = rank_ + 'th';
 						}
-						html_ = '<div class="clearfix wm_card_rank_box" title="查看TA的卡牌"><div class="fl wm_card_rank_text">'+rank_+'</div><div class="fl wm_card_rank_img"><img class="wm_card_get_list_avatar_pic" src="https://cdn.v2ex.com/gravatar/'+result.card[i].email+'?s=100&amp;d=mm&amp;r=g&amp;d=robohash" width="45" height="45" data-md5="'+result.card[i].email+'"></div><div class="fr wm_card_rank_point">'+cardCount+'种卡牌</div></div>';
+						html_ = '<div class="clearfix wm_card_rank_box" title="查看TA的卡牌"><div class="fl wm_card_rank_text">'+rank_+'</div><div class="fl wm_card_rank_img"><img class="wm_card_get_list_avatar_pic" src="https://cdn.v2ex.com/gravatar/'+result.card[i].uid+'?s=100&amp;d=mm&amp;r=g&amp;d=robohash" width="45" height="45" data-md5="'+result.card[i].uid+'"></div><div class="fr wm_card_rank_point">'+cardCount+'种卡牌</div></div>';
 						if(i<=4){
 							$('#wmCardRankBox .wm_card_rank_list').append(html_);
 						}else{
@@ -929,7 +927,7 @@ $(document).ready(function(e) {
 						}else{
 							rank_ = rank_ + 'th';
 						}
-						html_ = '<div class="clearfix wm_card_rank_box" title="查看TA的卡牌"><div class="fl wm_card_rank_text">'+rank_+'</div><div class="fl wm_card_rank_img"><img class="wm_card_get_list_avatar_pic" src="https://cdn.v2ex.com/gravatar/'+result.deminingStarCount[i].email+'?s=100&amp;d=mm&amp;r=g&amp;d=robohash" width="45" height="45" data-md5="'+result.deminingStarCount[i].email+'"></div><div class="fr wm_card_rank_point">'+result.deminingStarCount[i].deminingStarCount+'颗星星</div></div>';
+						html_ = '<div class="clearfix wm_card_rank_box" title="查看TA的卡牌"><div class="fl wm_card_rank_text">'+rank_+'</div><div class="fl wm_card_rank_img"><img class="wm_card_get_list_avatar_pic" src="https://cdn.v2ex.com/gravatar/'+result.deminingStarCount[i].uid+'?s=100&amp;d=mm&amp;r=g&amp;d=robohash" width="45" height="45" data-md5="'+result.deminingStarCount[i].uid+'"></div><div class="fr wm_card_rank_point">'+result.deminingStarCount[i].deminingStarCount+'颗星星</div></div>';
 						if(i<=4){
 							$('#wmDeminingRankBox .wm_card_rank_list').append(html_);
 						}else{
@@ -977,7 +975,6 @@ $(document).ready(function(e) {
 	//查询星星方法
 	function searchStar(windowIndex,starShopOpen){
 		var wmStarSearchInput = $('#wmStarSearchInput').val();
-		var reg = new RegExp("^[a-z0-9]+([._\\-]*[a-z0-9])*@([a-z0-9]+[-a-z0-9]*[a-z0-9]+.){1,63}[a-z0-9]+$");
 		if(wmStarSearchInput === ""){ //输入不能为空
 	　　　　layer.alert("wmStarSearchInputuid不能为空");
 	　　　　return false;
@@ -1157,9 +1154,8 @@ $(document).ready(function(e) {
 					// 	btn1 :function(index){
 							var embuyuid = $('#wm_my_star').attr('data-mail');
 							var emBuyType = this_.attr('data-type');
-							var reg = new RegExp("^[a-z0-9]+([._\\-]*[a-z0-9])*@([a-z0-9]+[-a-z0-9]*[a-z0-9]+.){1,63}[a-z0-9]+$");
 							if(embuyuid === ""){ //输入不能为空
-								layer.alert("wmGetPassword uid不能为空");
+								layer.alert("wmGet uid不能为空");
 						　　　　return false;
 						　　}else{
 								var wmCardStarpath_ = wmCardPluginpath + 'wm_card_buy.php';
@@ -1393,13 +1389,13 @@ $(document).ready(function(e) {
 		layer.confirm('确定要分解'+wmMixText+'卡牌吗？分解后所选卡牌将会减少相应数量，并预计会获得'+star+'颗星星。', {
 			btn: ['分解','取消'] //按钮
 		  }, function(index){
-			wmMixCardPassword(cardID,cardCount);
+			wmMixCard(cardID,cardCount);
 			layer.close(index);
 		  }
 		);
 	}
 	//弹出分解卡牌密码确认
-	function wmMixCardPassword(cardID,cardCount){
+	function wmMixCard(cardID,cardCount){
 		var wmSendCardID = cardID.join(',');
 		var wmSendCardCount = cardCount.join(',');
 		console.log(wmSendCardID);
@@ -1407,15 +1403,11 @@ $(document).ready(function(e) {
 		{
 				var wmMixcardUid = $('#wmCardMixInput').val();
 				if(wmMixcardUid === ""){ //输入不能为空
-					layer.alert("wmMixCardPassworduid不能为空");
+					layer.alert("wmMixCarduid不能为空");
 			　　　　return false;
 				}else{
 					var wmCardStarpath_ = wmCardPluginpath + 'wm_card_mixcard.php';
 					$('#wmCardLoading').stop(true, false).fadeIn(100);
-					var wmRememberPass = 0;
-					if($('#wmRememberPass').hasClass('active')){
-						wmRememberPass = 1;
-					}
 					$.ajax({
 						type: 'POST',
 						url: wmCardStarpath_,
@@ -1423,11 +1415,6 @@ $(document).ready(function(e) {
 						success: function(result){
 							$('#wmCardLoading').stop(true, false).fadeOut(100);
 							if(result.code=="202"){
-								if($('#wmRememberPass').hasClass('active')){
-									wmSetDefaultPassWord(wmMixcardPassword);
-								}else{
-									wmDelDefaultMaillPassWord();
-								}
 								layer.confirm('成功分解了'+result.useCardNumbe+'张卡牌，获得了'+result.addStar+'颗星星！您现在剩余星星数量有'+result.starCount+'颗了！', {
 									btn: ['确定']
 									,btn1: function(index){
@@ -1980,18 +1967,14 @@ $(document).ready(function(e) {
 	}
 	$('#wm_tiaozhan_btn').attr('data-md5',addrmd5);
 	$('#wm_tiaozhan_btn').on('click',function(){
-		var wmUid = $('#wm_tiaozhan_email').val();
-		var reg = new RegExp("^[a-z0-9]+([._\\-]*[a-z0-9])*@([a-z0-9]+[-a-z0-9]*[a-z0-9]+.){1,63}[a-z0-9]+$");
+		var wmUid = $('#wm_tiaozhan_uid').val();
 		if(wmUid === ""){ //输入不能为空
 			layer.alert("wm_tiaozhan_btnuid不能为空");
 	　　　　return false;
-	　　}else if(!reg.test(wmUid)){ //正则验证不通过，格式不对
-			layer.alert("wm_tiaozhan_btnuid有误!");
-	　　　　return false;
 	　　}else{
-			var MyEmailMD5 = md5(wmUid);
-			var EMEmailMD5 = $('#wm_tiaozhan_btn').attr('data-md5');
-			gameInit(MyEmailMD5,EMEmailMD5);
+			var MyUidMD5 = md5(wmUid);
+			var EMUidMD5 = $('#wm_tiaozhan_btn').attr('data-md5');
+			gameInit(MyUidMD5,EMUidMD5);
 			
 		}
 	});
@@ -2218,11 +2201,10 @@ $(document).ready(function(e) {
 		$('.wm_card_game_body').fadeIn(500);
 		
 		var wmCardPluginpath__ = wmCardPluginpath+'cardGame.php';
-		
 			$.ajax({
 				type: 'POST',
 				url: wmCardPluginpath__,
-				data: {EMemail:EMmd5,Myemail:Mymd5},
+				data: {EMuid:EMmd5,Myuid:Mymd5},
 				success: function(result){
 					console.log(result);
 					if(result.code=="202"){

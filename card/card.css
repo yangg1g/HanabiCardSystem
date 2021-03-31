@@ -100,7 +100,7 @@
 .card.reverse .back {
 	display: none;
 }
-.wm_card_uid,.wm_card_email_starshop,.wm_card_email_cardmix,.wm_card_email_demining,.wm_card_email_bouerse,.wm_card_bouerse_buysell_input,.wm_card_email_guesscard{
+.wm_card_uid,.wm_card_uid_starshop,.wm_card_uid_cardmix,.wm_card_uid_demining,.wm_card_uid_bouerse,.wm_card_bouerse_buysell_input,.wm_card_uid_guesscard{
 	border:1px solid #333;
 	height:16px;
 	width:200px;
@@ -110,10 +110,10 @@
 	text-align:center;
 	background-color:#fff!important;
 }
-.wm_card_mailcheck .wm_card_email_starshop,.wm_card_bouerse_input_body .wm_card_email_bouerse,.wm_card_bouerse_buysell_input_body .wm_card_bouerse_buysell_input,.wm_card_guesscard_input_body .wm_card_email_guesscard{
+.wm_card_mailcheck .wm_card_uid_starshop,.wm_card_bouerse_input_body .wm_card_uid_bouerse,.wm_card_bouerse_buysell_input_body .wm_card_bouerse_buysell_input,.wm_card_guesscard_input_body .wm_card_uid_guesscard{
 	width: 180px;
 }
-.wm_card_email_body{
+.wm_card_uid_body{
 	text-align:center;
 }
 .wm_mycard_list{
@@ -154,6 +154,7 @@ input.wm_card_uid:-webkit-autofill {
 	background-color:#fff!important;
 }
 #wm_mylist_title{
+	display:none;
 }
 .wm_user_info_table{
 	width:100%;
@@ -578,6 +579,7 @@ input.wm_card_uid:-webkit-autofill {
 	}
 	.wm_banner_body .swiper-container{
 		width: 530px;
+		height: 160px;
 		max-width: 100%;
 		border-radius: 10px;
 		box-shadow: 0 0px 2px rgba(0,0,0,0.3);

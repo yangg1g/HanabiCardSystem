@@ -1,10 +1,11 @@
 <?php
 require_once('../../../init.php');
 require_once('module.php');
-function getCardInfo($emailMD5){//获取卡片数组
+error_reporting(0);
+function getCardInfo($uidMD5){//获取卡片数组
 			$DB = Database::getInstance();
-			$comment_author_email = "\"".$emailMD5."\"";
-			$mgid=$DB->query("SELECT * FROM ".DB_PREFIX."wm_card WHERE email=".$comment_author_email."");
+			$comment_author_uid = "\"".$uidMD5."\"";
+			$mgid=$DB->query("SELECT * FROM ".DB_PREFIX."wm_card WHERE uid=".$comment_author_uid."");
 			$mgidinfo=$DB->fetch_array($mgid);
 			//循环遍历卡组
 			$originCarIDArr = explode(",",$mgidinfo['cardID']);//1001,1002,1003
@@ -176,36 +177,36 @@ function setCry($cardData,$MyCardArr,$EMCardArr){//计算水晶攻击加成
 	return $plusGong;
 	
 }
-function setScore($Score,$emailMD5,$setBattleTime){
+function setScore($Score,$uidMD5,$setBattleTime){
 	$DB = Database::getInstance();
 	if($Score>2147483647){
 		$Score = 2147483647;
 	}
-	$comment_author_email = "\"".$emailMD5."\"";
+	$comment_author_uid = "\"".$uidMD5."\"";
 	if($setBattleTime==0){
-		$query = "Update ".DB_PREFIX."wm_card set score=".$Score." where email=".$comment_author_email."";
+		$query = "Update ".DB_PREFIX."wm_card set score=".$Score." where uid=".$comment_author_uid."";
 	}else{
 		$timeStamp = time();
-		$query = "Update ".DB_PREFIX."wm_card set score=".$Score." , battleStamp=".$timeStamp." where email=".$comment_author_email."";
+		$query = "Update ".DB_PREFIX."wm_card set score=".$Score." , battleStamp=".$timeStamp." where uid=".$comment_author_uid."";
 	}
 	$result=$DB->query($query);
 }
-function setLevel($level,$getexp,$emailMD5){
+function setLevel($level,$getexp,$uidMD5){
 	$DB = Database::getInstance();
 	if($level>2147483647){
 		$level = 2147483647;
 	}
-	$comment_author_email = "\"".$emailMD5."\"";
-	$query = "Update ".DB_PREFIX."wm_card set level=".$level." , exp=".$getexp." where email=".$comment_author_email."";
+	$comment_author_uid = "\"".$uidMD5."\"";
+	$query = "Update ".DB_PREFIX."wm_card set level=".$level." , exp=".$getexp." where uid=".$comment_author_uid."";
 	$result=$DB->query($query);
 }
 function gameStart(){
 	$data = null;
-	$EMemailAddr = strip_tags($_POST['EMemail']);
-	$MyemailAddr = strip_tags($_POST['Myemail']);
-	if(!preg_match("/^[A-Za-z0-9]+$/",$EMemailAddr)||!preg_match("/^[A-Za-z0-9]+$/",$MyemailAddr)||$EMemailAddr==$MyemailAddr){
-		$data = json_encode(array('code'=>"0"));
-	}else{
+	$EMuid = strip_tags($_POST['EMuid']);
+	//$EMuid = "bcbe3365e6ac95ea2c0343a2395834dd";
+	$Myuid = strip_tags($_POST['Myuid']);
+	//$Myuid = "202cb962ac59075b964b07152d234b70";
+	{
 		$MyHP = 0;
 		$MyGong = 0;
 		$MyFang = 0;
@@ -223,8 +224,8 @@ function gameStart(){
 		$json_string = file_get_contents('cardData.json');
 		$cardData = json_decode($json_string, true); 
 			
-		$EMCardInfo = getCardInfo($EMemailAddr);//取得敌方的卡牌和数据库信息[0]是卡牌数据[1]是数据库信息
-		$MyCardInfo = getCardInfo($MyemailAddr);//取得自己的卡牌和数据库信息
+		$EMCardInfo = getCardInfo($EMuid);//取得敌方的卡牌和数据库信息[0]是卡牌数据[1]是数据库信息
+		$MyCardInfo = getCardInfo($Myuid);//取得自己的卡牌和数据库信息
 		
 		$EMCard = $EMCardInfo[0];
 		$MyCard = $MyCardInfo[0];
@@ -238,8 +239,8 @@ function gameStart(){
 			$data = json_encode(array('code'=>"1"));//没有牌
 		}else if(empty($EMCard[0]) || empty($MyCard[0])){
 			$data = json_encode(array('code'=>"1"));//没有牌
-		}else if($wmBattleNowDate == $wmBattleEMBaseDate){
-			$data = json_encode(array('code'=>"2"));//今天已经挑战过了
+		//}else if($wmBattleNowDate == $wmBattleEMBaseDate){
+		//	$data = json_encode(array('code'=>"2"));//今天已经挑战过了
 		}else{
 			if(count($EMCard)>20){//牌大于20张的时候取20张
 				$EMCard = cardSet($EMCard,20);
@@ -442,8 +443,8 @@ function gameStart(){
 					$EMGetScore = 0;
 				}
 				
-				setScore($EMGetScore,$EMemailAddr,0);
-				setScore($MyGetScore,$MyemailAddr,1);
+				setScore($EMGetScore,$EMuid,0);
+				setScore($MyGetScore,$Myuid,1);
 					
 			}else if($IsWin==1){//敌方赢了
 				$MyGetScore_ = 10;
@@ -465,16 +466,16 @@ function gameStart(){
 					$EMGetScore = 0;
 				}
 				
-				setScore($EMGetScore,$EMemailAddr,0);
-				setScore($MyGetScore,$MyemailAddr,1);
+				setScore($EMGetScore,$EMuid,0);
+				setScore($MyGetScore,$Myuid,1);
 			}
 			$setLevelInfo = wmSetLevel($MyLevelOrigin,$MyEXPOrigin,$MyGetScore_);
 			$levelSet = $setLevelInfo['level'];
 			$GetEXP = $setLevelInfo['GetEXP'];
-			setLevel($levelSet,$GetEXP,$MyemailAddr);
+			setLevel($levelSet,$GetEXP,$Myuid);
 			
 			//写入或更新最动态列表json
-			$gameJsonData = array('mailMD5'=>$MyemailAddr,'EMmailMD5'=>$EMemailAddr,'MyGetScore'=>$MyGetScore_post,'GETEXP'=>$MyGetScore_,'Win'=>$IsWin,'massageType'=>'battle');
+			$gameJsonData = array('mailMD5'=>$Myuid,'EMmailMD5'=>$EMuid,'MyGetScore'=>$MyGetScore_post,'GETEXP'=>$MyGetScore_,'Win'=>$IsWin,'massageType'=>'battle');
 			wmWriteJson($gameJsonData);
 			$data = json_encode(array('code'=>"202",'cardData'=>$cardData,'EMCard'=>$EMCard,'MyCard'=>$MyCard,'MyStartStat'=>array($MyHP_,$MyGong_,$MyFang_,$MySu),'EMStartStat'=>array($EMHP_,$EMGong_,$EMFang_,$EMSu),'roundData'=>$roundData,'Win'=>$IsWin,'MyGetScore'=>$MyGetScore_post,'MyScoreOrigin'=>$MyScoreOrigin,'EMGetScore'=>$EMGetScore,'EMScoreOrigin'=>$EMScoreOrigin,'GETEXP'=>$MyGetScore_,'EMLevelOrigin'=>$EMLevelOrigin,'MyLevelOrigin'=>$MyLevelOrigin,'MyEXPOrigin'=>$MyEXPOrigin,'MyLevel'=>$levelSet));
 		}

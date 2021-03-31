@@ -47,16 +47,16 @@ function searchWmDataBaseByRank(){
     $wmRankDeminingStarCount = array();
     $timeStamp = time();
     while($result=$DB->fetch_array($mgidScore)){
-        array_push($wmRankScoreArr,array('score'=>$result['score'],'email'=>$result['email']));
+        array_push($wmRankScoreArr,array('score'=>$result['score'],'uid'=>$result['uid']));
     }
     while($result=$DB->fetch_array($mgidCardLength)){
-        array_push($wmRankCardArr,array('cardID'=>$result['cardID'],'email'=>$result['email']));
+        array_push($wmRankCardArr,array('cardID'=>$result['cardID'],'uid'=>$result['uid']));
     }
     while($result=$DB->fetch_array($mgidLevel)){
-        array_push($wmRankLevel,array('level'=>$result['level'],'email'=>$result['email']));
+        array_push($wmRankLevel,array('level'=>$result['level'],'uid'=>$result['uid']));
     }
     while($result=$DB->fetch_array($mgidDeminingStarCount)){
-        array_push($wmRankDeminingStarCount,array('deminingStarCount'=>$result['deminingStarCount'],'email'=>$result['email']));
+        array_push($wmRankDeminingStarCount,array('deminingStarCount'=>$result['deminingStarCount'],'uid'=>$result['uid']));
     }
     $wmRankJsonData = array('score'=>$wmRankScoreArr,'card'=>$wmRankCardArr,'level'=>$wmRankLevel,'deminingStarCount'=>$wmRankDeminingStarCount,'updataTime'=>$timeStamp);
     file_put_contents('cardRank.json', json_encode($wmRankJsonData));

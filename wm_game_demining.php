@@ -131,7 +131,7 @@ function wmCheckDemNode($wmClickNode){
                         $wmopenedData = openNode($node[0],$node[1],$rows,$cols,$wmDeminingGameData,$wmDeminingGameDataMap);//校验节点是否存在并尝试打开节点
                         if($wmopenedData){
                             //节点正常
-                            array_push($players,array('xy'=>$wmClickNode,'emailMD5'=>md5($uid)));
+                            array_push($players,array('xy'=>$wmClickNode,'uidMD5'=>md5($uid)));
                             $wmNodeDataStatu = 0;
                             $wmNodeLastBoom = 0;
                             $randomStar = 0;
