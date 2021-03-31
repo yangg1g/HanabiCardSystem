@@ -3,12 +3,13 @@ require_once('../../../init.php');
 function wm_cardsearch(){
 	$DB = Database::getInstance();
 	$data = null;
-	$emailAddr = strip_tags($_POST['email']);
-	if(!preg_match("/^[A-Za-z0-9]+$/",$emailAddr)){
+	$uid = strip_tags($_POST['uid']);
+	//$uid = "103ee840a98a6da247cf2f7b09e3cb58";
+	if(!preg_match("/^[A-Za-z0-9]+$/",$uid)){
 		$data = json_encode(array('code'=>"0"));
 	}else{
-		$comment_author_email = "\"".$emailAddr."\"";
-		$mgid=$DB->query("SELECT * FROM ".DB_PREFIX."wm_card WHERE email=".$comment_author_email."");
+		$comment_author_uid = "\"".$uid."\"";
+		$mgid=$DB->query("SELECT * FROM ".DB_PREFIX."wm_card WHERE uid=".$comment_author_uid."");
 		$mgidinfo=$DB->fetch_array($mgid);
 		if ($mgidinfo) {
 			$json_string = json_decode(file_get_contents('cardData.json'), true);//查询卡牌数据

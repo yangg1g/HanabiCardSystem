@@ -99,13 +99,12 @@ function wmCheckDemNode($wmClickNode){
     }
     
     $DB = Database::getInstance();
-    $emailAddr = strip_tags($_POST['email']);
+    $uid = strip_tags($_POST['uid']);
     // $password = strip_tags($_POST['password']);
-    $checkmail="/^([a-zA-Z0-9])+([a-zA-Z0-9\?\*\[|\]%=~^\{\}\/\+!#&\$\._-])*@([a-zA-Z0-9_-])+\.([a-zA-Z0-9\._-]+)+$/";//定义正则表达式
-    if(isset($emailAddr) && $emailAddr!=""){
-        if(preg_match($checkmail,$emailAddr)){//用正则表达式函数进行判断  
-            $emailAddrMd5 = "\"".md5($emailAddr)."\"";
-            $mgid=$DB->query("SELECT * FROM ".DB_PREFIX."wm_card WHERE email=".$emailAddrMd5."");
+    if(isset($uid) && $uid!=""){
+        {//用正则表达式函数进行判断  
+            $uidMd5 = "\"".md5($uid)."\"";
+            $mgid=$DB->query("SELECT * FROM ".DB_PREFIX."wm_card WHERE uid=".$uidMd5."");
             $mgidinfo=$DB->fetch_array($mgid);
             if ($mgidinfo) {
                 //有该用户
@@ -132,7 +131,7 @@ function wmCheckDemNode($wmClickNode){
                         $wmopenedData = openNode($node[0],$node[1],$rows,$cols,$wmDeminingGameData,$wmDeminingGameDataMap);//校验节点是否存在并尝试打开节点
                         if($wmopenedData){
                             //节点正常
-                            array_push($players,array('xy'=>$wmClickNode,'emailMD5'=>md5($emailAddr)));
+                            array_push($players,array('xy'=>$wmClickNode,'emailMD5'=>md5($uid)));
                             $wmNodeDataStatu = 0;
                             $wmNodeLastBoom = 0;
                             $randomStar = 0;
@@ -165,14 +164,14 @@ function wmCheckDemNode($wmClickNode){
                             $levelSet = $setLevelInfo['level'];
 			                $GetEXPSet = $setLevelInfo['GetEXP'];
                             //写入动态JSON
-                            $gameJsonData = array('mailMD5'=>md5($emailAddr),'getStar'=>$randomStar,'attackNum'=>$wmAttackData,'lastBoom'=>$wmNodeLastBoom,'MyGetExp'=>$MyGetExp,'massageType'=>'demining');
+                            $gameJsonData = array('mailMD5'=>md5($uid),'getStar'=>$randomStar,'attackNum'=>$wmAttackData,'lastBoom'=>$wmNodeLastBoom,'MyGetExp'=>$MyGetExp,'massageType'=>'demining');
                             wmWriteJson($gameJsonData);
                             if($wmNodeLastBoom==1){
                                 //如果是最后一片矿，则不更新时间戳也就是说可以连续挖。
                                 $timeStamp = $deminingStamp;
                             }
                             //更新数据库
-                            $query = "Update ".DB_PREFIX."wm_card set level=".$levelSet." , exp=".$GetEXPSet.", deminingStamp=".$timeStamp.", starCount=starCount+".$randomStar.", deminingStarCount=deminingStarCount+".$randomStar." where email=".$emailAddrMd5."";
+                            $query = "Update ".DB_PREFIX."wm_card set level=".$levelSet." , exp=".$GetEXPSet.", deminingStamp=".$timeStamp.", starCount=starCount+".$randomStar.", deminingStarCount=deminingStarCount+".$randomStar." where uid=".$uidMd5."";
                             $result=$DB->query($query);
                             //更新缓存数据
                             $clickNodeResault = wxportWmDeminingGameMap();
@@ -202,12 +201,9 @@ function wmCheckDemNode($wmClickNode){
                 $wmNodeData = array('code'=>3);//无该用户
                 echo json_encode($wmNodeData);
             }
-        }else{
-            $wmNodeData = array('code'=>2);//邮箱有误
-            echo json_encode($wmNodeData);
         }
     }else{
-        $wmNodeData = array('code'=>2);//邮箱有误
+        $wmNodeData = array('code'=>2);//uid有误
         echo json_encode($wmNodeData);
     }
     
@@ -222,7 +218,7 @@ function openNode($i,$j,$rows,$cols,$wmDeminingGameData,$wmDeminingGameDataMap){
     $data["open".$i."_".$j] = 1;//打开节点
     return $data;
   } 
-if(isset($_POST['type'])=='open' && isset($_POST['email'])){
+if(isset($_POST['type'])=='open' && isset($_POST['uid'])){
     if(strip_tags($_POST['type'])=='open'){
         $wmClickNode = $_POST['node'];
         wmCheckDemNode($wmClickNode);

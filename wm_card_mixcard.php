@@ -3,27 +3,24 @@ require_once('../../../init.php');
 require_once('module.php');
 function mixCard(){
     $data = null;
-    $emailAddr = strip_tags($_POST['email']);
-    $password = strip_tags($_POST['password']);
-    $rememberPass = intval($_POST['rememberPass']);
+    $uid = strip_tags($_POST['uid']);
     $cardIDArr = explode(",",strip_tags($_POST['cardID']));//1001,1002,1003
     $cardCountArr = explode(",",strip_tags($_POST['cardCount']));//1,2,1
-    $checkmail="/^([a-zA-Z0-9])+([a-zA-Z0-9\?\*\[|\]%=~^\{\}\/\+!#&\$\._-])*@([a-zA-Z0-9_-])+\.([a-zA-Z0-9\._-]+)+$/";//定义正则表达式
-    if(isset($emailAddr) && $emailAddr!=""){
-        if(preg_match($checkmail,$emailAddr)){//用正则表达式函数进行判断 
+    if(isset($uid) && $uid!=""){
+        {//用正则表达式函数进行判断 
             if(count($cardIDArr)==count($cardCountArr)){//判断是否数据一致
                 $DB = Database::getInstance();
-                $emailAddrMd5 = "\"".md5($emailAddr)."\"";
-                $mgid=$DB->query("SELECT * FROM ".DB_PREFIX."wm_card WHERE email=".$emailAddrMd5."");
+                $uidMd5 = "\"".md5($uid)."\"";
+                $mgid=$DB->query("SELECT * FROM ".DB_PREFIX."wm_card WHERE uid=".$uidMd5."");
                 $mgidinfo=$DB->fetch_array($mgid);
                 if ($mgidinfo) {
                     //有该用户
                     $bdPassword = intval($mgidinfo['verifyCode']);
-                    if($password==$bdPassword&&$bdPassword!=0){
+                    {
                         $timeStamp = time();
                         $passwordTime = intval($mgidinfo['verifyCodeStamp']);
                         $verifyCodeRemember = intval($mgidinfo['verifyCodeRemember']);
-                        if((($timeStamp - $passwordTime)<1800&&($timeStamp - $passwordTime)>0)||$verifyCodeRemember==1){
+                        {
                             $json_string = json_decode(file_get_contents('cardData.json'), true);//查询卡牌数据
                             $useCardNumber = 0;
                             $addStarCount = 0;//增加的星星
@@ -31,9 +28,6 @@ function mixCard(){
                             $originCardCount = $mgidinfo['cardCount'];
                             //如果保存密码的话则verifyCodeRemember为1
                             $verifyCodeRemember = 0;
-                            if($rememberPass==1){
-                                $verifyCodeRemember = 1;
-                            }
                             //循环遍历卡组
                             $originCarIDArr = explode(",",$originCarID);//1001,1002,1003
                             $originCarCountArr = explode(",",$originCardCount);//1,2,1
@@ -72,18 +66,14 @@ function mixCard(){
                                 $originCardCountText = implode(",",$originCarCountArr);
                                 //写入数据库
                                 $starCount = intval($mgidinfo['starCount'])+$addStarCount;
-                                $query = "Update ".DB_PREFIX."wm_card set verifyCodeRemember='".$verifyCodeRemember."' , cardCount='".$originCardCountText."' , starCount=".$starCount." where email=".$emailAddrMd5."";
+                                $query = "Update ".DB_PREFIX."wm_card set verifyCodeRemember='".$verifyCodeRemember."' , cardCount='".$originCardCountText."' , starCount=".$starCount." where uid=".$uidMd5."";
                                 $result=$DB->query($query);
                                 $data = json_encode(array('code'=>"202",'addStar'=>$addStarCount,'starCount'=>$starCount,'useCardNumbe'=>$useCardNumber)); //成功
-                                $cardJsonData = array('mailMD5'=>md5($emailAddr),'addStar'=>$addStarCount,'useCardNumbe'=>$useCardNumber,'massageType'=>'mixcard');
+                                $cardJsonData = array('mailMD5'=>md5($uid),'addStar'=>$addStarCount,'useCardNumbe'=>$useCardNumber,'massageType'=>'mixcard');
                                 //写入或动态列表json
                                 wmWriteJson($cardJsonData);
                             }
-                        }else{
-                            $data = json_encode(array('code'=>"201")); //密码有误或者过期
                         }
-                    }else{
-                        $data = json_encode(array('code'=>"201")); //密码有误或者过期
                     }
                     
                 }else{
@@ -92,15 +82,13 @@ function mixCard(){
             }else{
                 $data = json_encode(array('code'=>"100")); //数据有误
             }
-        }else{
-            $data = json_encode(array('code'=>"0")); //邮箱有误
         }
     }else{
-        $data = json_encode(array('code'=>"0")); //邮箱有误
+        $data = json_encode(array('code'=>"0")); //uid有误
     }
     echo $data;
 }
-if(isset($_POST['email'])&&isset($_POST['cardID'])&&isset($_POST['cardCount'])&&isset($_POST['password'])){
+if(isset($_POST['uid'])&&isset($_POST['cardID'])&&isset($_POST['cardCount'])){
     mixCard();
 }
 ?>

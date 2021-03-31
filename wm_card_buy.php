@@ -2,25 +2,22 @@
 require_once('../../../init.php');
 require_once('module.php');
 function buyCard(){
-    $emailAddr = strip_tags($_POST['email']);
+    $uid = strip_tags($_POST['uid']);
+    //$uid = "123";
     $buyType = intval($_POST['type']);
-    $password = intval($_POST['password']);
-    $rememberPass = intval($_POST['rememberPass']);
-    $checkmail="/^([a-zA-Z0-9])+([a-zA-Z0-9\?\*\[|\]%=~^\{\}\/\+!#&\$\._-])*@([a-zA-Z0-9_-])+\.([a-zA-Z0-9\._-]+)+$/";//定义正则表达式
+    //$buyType = 4;
     $data = null;
-    if(isset($emailAddr) && $emailAddr!=""){
-        if(preg_match($checkmail,$emailAddr)){//用正则表达式函数进行判断 
+    if(isset($uid) && $uid!=""){
+        {//用正则表达式函数进行判断 
             $DB = Database::getInstance();
-            $emailAddrMD5 = "\"".md5($emailAddr)."\"";
-            $mgid=$DB->query("SELECT * FROM ".DB_PREFIX."wm_card WHERE email=".$emailAddrMD5."");
+            $uidMD5 = "\"".md5($uid)."\"";
+            $mgid=$DB->query("SELECT * FROM ".DB_PREFIX."wm_card WHERE uid=".$uidMD5."");
             $mgidinfo=$DB->fetch_array($mgid);
             if ($mgidinfo) {
-                $bdPassword = intval($mgidinfo['verifyCode']);
-                if($password==$bdPassword&&$bdPassword!=0){
+                {
                     $timeStamp = time();
-                    $passwordTime = intval($mgidinfo['verifyCodeStamp']);
                     $verifyCodeRemember = intval($mgidinfo['verifyCodeRemember']);
-                    if((($timeStamp - $passwordTime)<1800&&($timeStamp - $passwordTime)>0)||$verifyCodeRemember==1){
+                    {
                         $randomCardRate = mt_rand(1, 100);
                         $starFlag = false;//true为星星不足
                         $starCount = intval($mgidinfo['starCount']);
@@ -29,9 +26,6 @@ function buyCard(){
                         $chinChioseCardNum = 0;//连抽几次
                         //如果保存密码的话则verifyCodeRemember为1
                         $verifyCodeRemember = 0;
-                        if($rememberPass==1){
-                            $verifyCodeRemember = 1;
-                        }
                         if($buyType==3){
                             $shouldStar = 30;
                             $buyClass = 1;
@@ -100,13 +94,13 @@ function buyCard(){
                             if($starCountAfter<0){
                                 $starCountAfter = 0;
                             }
-                            $query = "Update ".DB_PREFIX."wm_card set verifyCodeRemember='".$verifyCodeRemember."' , cardID='".$originCarIDText."' , cardCount='".$originCardCountText."' , starCount=".$starCountAfter." where email=".$emailAddrMD5."";
+                            $query = "Update ".DB_PREFIX."wm_card set verifyCodeRemember='".$verifyCodeRemember."' , cardID='".$originCarIDText."' , cardCount='".$originCardCountText."' , starCount=".$starCountAfter." where uid=".$uidMD5."";
                             $result=$DB->query($query);
 
                             $json_string = json_decode(file_get_contents('cardData.json'), true);//查询卡牌数据
                             
                             $getCardData = $json_string['cardData'][$randomCardID];//抽中卡牌数据
-                            $cardJsonData = array('mailMD5'=>md5($emailAddr),'cardInfo'=>$getCardData,'cardID'=>$randomCardID,'useStar'=>$shouldStar,'massageType'=>'buy','buyClass'=>$buyClass);
+                            $cardJsonData = array('mailMD5'=>md5($uid),'cardInfo'=>$getCardData,'cardID'=>$randomCardID,'useStar'=>$shouldStar,'massageType'=>'buy','buyClass'=>$buyClass);
                             wmWriteJson($cardJsonData);
 
                             $data = json_encode(array('code'=>"202" , 'card'=>$randomCardID ,'starCountAfter'=>$starCountAfter ,'buyClass'=>$buyClass)); 
@@ -125,13 +119,13 @@ function buyCard(){
                                 $originCarID = $callBackCardInfo['originCarIDText'];
                                 $originCardCount = $callBackCardInfo['originCardCountText'];
                             }
-                            $cardJsonData = array('mailMD5'=>md5($emailAddr),'chinChioseCardNum'=>$chinChioseCardNum,'card'=>$chainChioseCardId,'useStar'=>$shouldStar,'massageType'=>'buy','buyClass'=>$buyClass);
+                            $cardJsonData = array('mailMD5'=>md5($uid),'chinChioseCardNum'=>$chinChioseCardNum,'card'=>$chainChioseCardId,'useStar'=>$shouldStar,'massageType'=>'buy','buyClass'=>$buyClass);
                             wmWriteJson($cardJsonData);
                             $starCountAfter = $starCount - $shouldStar;
                             if($starCountAfter<0){
                                 $starCountAfter = 0;
                             }
-                            $query = "Update ".DB_PREFIX."wm_card set verifyCodeRemember='".$verifyCodeRemember."' , cardID='".$originCarID."' , cardCount='".$originCardCount."' , starCount=".$starCountAfter." where email=".$emailAddrMD5."";
+                            $query = "Update ".DB_PREFIX."wm_card set verifyCodeRemember='".$verifyCodeRemember."' , cardID='".$originCarID."' , cardCount='".$originCardCount."' , starCount=".$starCountAfter." where uid=".$uidMD5."";
                             $result=$DB->query($query);
                             $data = json_encode(array('code'=>"202" , 'card'=>$chainChioseCardId ,'starCountAfter'=>$starCountAfter ,'buyClass'=>$buyClass));
 
@@ -142,32 +136,22 @@ function buyCard(){
                         //type有误
                             $data = json_encode(array('code'=>"4"));  
                         }
-                    }else{
-                        //密码过时
-                        $data = json_encode(array('code'=>"301")); 
                     }
-                }else{
-                    //密码不对
-                    $data = json_encode(array('code'=>"301")); 
                 }
-                
             }else{
                 //没有该用户
                 $data = json_encode(array('code'=>"6")); 
             }
-        }else{
-            //邮箱地址错误
-           $data = json_encode(array('code'=>"1")); 
         }
 
     }else{
-        //邮箱地址为空
+        //uid为空
 		$data = json_encode(array('code'=>"0")); 
     }
     echo $data;
 }
-if(isset($_POST['email'])&&isset($_POST['password'])&&isset($_POST['type'])&&isset($_POST['rememberPass'])){
+//if(isset($_POST['uid'])&&isset($_POST['type'])){
     buyCard();
-}
+//}
 
 ?>

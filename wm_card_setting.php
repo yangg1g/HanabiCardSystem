@@ -1,4 +1,5 @@
 <?php
+require_once '../../../init.php';
 if(!defined('EMLOG_ROOT')) {exit('error!');}
 session_start();   
 header("Content-Type: text/html;charset=utf-8");   
@@ -62,7 +63,7 @@ function plugin_setting_view(){
         <form class="card_setting" method="post">  
                 <input type="hidden" name="wmtoken" value="<?php echo $_SESSION['wmtoken']?>">
                 <input type="hidden" name="settingType" value="postStar" />
-                <div>给邮箱<input style="margin:0 5px;" type="text" name="giveEmail" placeholder="请输入邮箱" value="" autocomplete="on" />赠送<input style="margin:0 5px;" type="number" name="star" placeholder="请输入星星数量" value="" autocomplete="off" />个星星</div>
+                <div>给用户<input style="margin:0 5px;" type="text" name="giveUid" placeholder="请输入uid" value="" autocomplete="on" />赠送<input style="margin:0 5px;" type="number" name="star" placeholder="请输入星星数量" value="" autocomplete="off" />个星星</div>
                 <br />
                 <input type="submit" value="发送星星" />
         </form>
@@ -93,14 +94,13 @@ if(!empty($_POST)&&valid_wmtoken()){
                 )));
                 echo '<div class="success_alert">设置成功</div>'; 
         }else if($_POST['settingType']=='postStar'){
-                $emailAddr = strip_tags($_POST['giveEmail']);
-                $checkmail="/^([a-zA-Z0-9])+([a-zA-Z0-9\?\*\[|\]%=~^\{\}\/\+!#&\$\._-])*@([a-zA-Z0-9_-])+\.([a-zA-Z0-9\._-]+)+$/";//定义正则表达式
-                if(isset($emailAddr) && $emailAddr!=""){
-                        if(preg_match($checkmail,$emailAddr)){//用正则表达式函数进行判断  
-                                //邮箱地址正确
+                $uid = strip_tags($_POST['giveUid']);
+                if(isset($uid) && $uid!=""){
+                        {//用正则表达式函数进行判断  
+                                //uid正确
                                 $DB = Database::getInstance();
-                                $send_email = "\"".md5($emailAddr)."\"";
-                                $mgid=$DB->query("SELECT * FROM ".DB_PREFIX."wm_card WHERE email=".$send_email."");
+                                $send_uid = "\"".md5($uid)."\"";
+                                $mgid=$DB->query("SELECT * FROM ".DB_PREFIX."wm_card WHERE uid=".$send_uid."");
                                 $mgidinfo=$DB->fetch_array($mgid);
                                 if (!$mgidinfo){
                                         echo '<div class="error_alert">无该用户</div>';
@@ -111,21 +111,19 @@ if(!empty($_POST)&&valid_wmtoken()){
                                                 echo '<div class="error_alert">请输入1以上的星星数量</div>';
                                         }else{
                                                 //开始赠送
-                                                $query = "Update ".DB_PREFIX."wm_card set starCount=starCount+".$starCount." where email=".$send_email."";
+                                                $query = "Update ".DB_PREFIX."wm_card set starCount=starCount+".$starCount." where uid=".$send_uid."";
                                                 $result=$DB->query($query);
-                                                echo '<div class="success_alert">成功给'.$emailAddr.'赠送了'.$starCount.'个星星</div>';
+                                                echo '<div class="success_alert">成功给'.$uid.'赠送了'.$starCount.'个星星</div>';
                                         }
                                 }
-                        }else{
-                                echo '<div class="error_alert">邮箱地址有误</div>'; 
                         }
                 }else{
-                        echo '<div class="error_alert">邮箱地址有误</div>';
+                        echo '<div class="error_alert">uid为空</div>';
                 }
         }
         
 
         //header("Location: {$_SERVER['REQUEST_URI']}");
 }
-
+plugin_setting_view();
 ?>

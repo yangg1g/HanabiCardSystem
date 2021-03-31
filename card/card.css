@@ -100,7 +100,7 @@
 .card.reverse .back {
 	display: none;
 }
-.wm_card_email,.wm_card_email_starshop,.wm_card_email_cardmix,.wm_card_email_demining,.wm_card_email_bouerse,.wm_card_bouerse_buysell_input,.wm_card_email_guesscard{
+.wm_card_uid,.wm_card_email_starshop,.wm_card_email_cardmix,.wm_card_email_demining,.wm_card_email_bouerse,.wm_card_bouerse_buysell_input,.wm_card_email_guesscard{
 	border:1px solid #333;
 	height:16px;
 	width:200px;
@@ -125,7 +125,7 @@
 	border-radius: 5px;
 }
 .wm_card_chiose_title{
-	    font-size: 22px;
+	font-size: 22px;
     padding: 10px 0;
     line-height: 32px;
     text-align: center;
@@ -150,11 +150,10 @@
     color: #254d6d!important;
 }
 
-input.wm_card_email:-webkit-autofill {
+input.wm_card_uid:-webkit-autofill {
 	background-color:#fff!important;
 }
 #wm_mylist_title{
-	display:none;
 }
 .wm_user_info_table{
 	width:100%;
@@ -550,7 +549,7 @@ input.wm_card_email:-webkit-autofill {
 		padding-top: 90px;
 	}
 	#wmStarshopBody .selectedcard:hover .wm_starshop_rebuy_body{
-		display: block;
+		display: none;
 	}
 	.wm_card_starshop_input_body{
 		display: none;
@@ -905,7 +904,7 @@ input.wm_card_email:-webkit-autofill {
 		text-align: center;
 		padding: 10px 0 0 0;
 	}
-	/* 记住邮箱 */
+	/* 记住uid */
 	.wm_card_remember_body{
 		text-align: center;
 		margin-top: 8px;

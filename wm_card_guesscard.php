@@ -1,17 +1,20 @@
 <?php
 require_once('../../../init.php');
 require_once('module.php');
+error_reporting(0);
 function wmGuessard(){
     $DB = Database::getInstance();
-    $emailAddr = strip_tags($_POST['email']);
+    $uid = strip_tags($_POST['uid']);
+    $uid = "123";
     $guessType = strip_tags($_POST['type']);
+    $guessType = 2;
     $guessSelCard = strip_tags($_POST['cardID']);
     // $password = strip_tags($_POST['password']);
     $checkmail="/^([a-zA-Z0-9])+([a-zA-Z0-9\?\*\[|\]%=~^\{\}\/\+!#&\$\._-])*@([a-zA-Z0-9_-])+\.([a-zA-Z0-9\._-]+)+$/";//定义正则表达式
-    if(isset($emailAddr) && $emailAddr!=""){
-        if(preg_match($checkmail,$emailAddr)){//用正则表达式函数进行判断  
-            $emailAddrMd5 = "\"".md5($emailAddr)."\"";
-            $mgid=$DB->query("SELECT * FROM ".DB_PREFIX."wm_card WHERE email=".$emailAddrMd5."");
+    if(isset($uid) && $uid!=""){
+        {//用正则表达式函数进行判断  
+            $uidMd5 = "\"".md5($uid)."\"";
+            $mgid=$DB->query("SELECT * FROM ".DB_PREFIX."wm_card WHERE uid=".$uidMd5."");
             $mgidinfo=$DB->fetch_array($mgid);
             if ($mgidinfo) {
                 $guesscardData = searchWmGuesscard(true);
@@ -87,14 +90,14 @@ function wmGuessard(){
 						if($rememberPass==1){
 							$verifyCodeRemember = 1;
 						}
-                        $query = "Update ".DB_PREFIX."wm_card set verifyCodeRemember='".$verifyCodeRemember."' , guessCard='".json_encode($myGuesscardDatabase)."' , starCount=".$starCountAfter."  where email=".$emailAddrMd5."";
+                        $query = "Update ".DB_PREFIX."wm_card set verifyCodeRemember='".$verifyCodeRemember."' , guessCard='".json_encode($myGuesscardDatabase)."' , starCount=".$starCountAfter."  where uid=".$uidMd5."";
                         $result=$DB->query($query);
                         $wmcardDatabase = json_decode(file_get_contents('cardData.json'), true);//查询卡牌数据
                         $wmcardDataName = array();
                         for($k=0;$k<count($guessSelCardArr);$k++){
                             array_push($wmcardDataName,$wmcardDatabase['cardData'][$guessSelCardArr[$k]]['name']);
                         }
-                        $cardJsonData = array('mailMD5'=>md5($emailAddr),'cardName'=>$wmcardDataName,'cardID'=>$guessSelCardArr,'time'=>$guesscardData['time'],'massageType'=>'guesscard','type'=>0);
+                        $cardJsonData = array('mailMD5'=>md5($uid),'cardName'=>$wmcardDataName,'cardID'=>$guessSelCardArr,'time'=>$guesscardData['time'],'massageType'=>'guesscard','type'=>0);
 						wmWriteJson($cardJsonData);
                         $wmGuesscardPut = array('code'=>202,'star'=>$starCountAfter);
                         echo json_encode($wmGuesscardPut);
@@ -164,9 +167,9 @@ function wmGuessard(){
                     }
                     $myGuesscardDatabase = $myGuesscardObject;
                     $myGuesscardDatabase['isUsed'] = 1;
-                    $query = "Update ".DB_PREFIX."wm_card set guessCard='".json_encode($myGuesscardDatabase)."' , starCount=".$starCountAfter."  where email=".$emailAddrMd5."";
+                    $query = "Update ".DB_PREFIX."wm_card set guessCard='".json_encode($myGuesscardDatabase)."' , starCount=".$starCountAfter."  where uid=".$uidMd5."";
                     $result=$DB->query($query);
-                    $cardJsonData = array('mailMD5'=>md5($emailAddr),'getStar'=>$getStar,'wmAttackNum'=>$wmAttackNum,'time'=>$myGuesscardObject['time'],'massageType'=>'guesscard','type'=>1);
+                    $cardJsonData = array('mailMD5'=>md5($uid),'getStar'=>$getStar,'wmAttackNum'=>$wmAttackNum,'time'=>$myGuesscardObject['time'],'massageType'=>'guesscard','type'=>1);
                     wmWriteJson($cardJsonData);
                     $wmGuesscardPut = array('code'=>202,'getStar'=>$getStar,'star'=>$starCountAfter);
                     echo json_encode($wmGuesscardPut);
@@ -176,13 +179,7 @@ function wmGuessard(){
                 $bouerseOutData = array('code'=>3);//无该用户
                 echo json_encode($bouerseOutData);
             }
-        }else{
-            $bouerseOutData = array('code'=>2);//邮箱有误
-            echo json_encode($bouerseOutData);
         }
-    }else{
-        $bouerseOutData = array('code'=>2);//邮箱有误
-        echo json_encode($bouerseOutData);
     }
 }
 function searchWmGuesscard($isRetuen){
@@ -241,9 +238,7 @@ function creatWmguesscardList(){//生成竞猜卡牌
     }
     return $chainChioseCardId;
 }
-if(isset($_POST['type']) && isset($_POST['email'])&&isset($_POST['cardID'])&&isset($_POST['rememberPass'])&&isset($_POST['password'])){
+if(isset($_POST['type']) && isset($_POST['uid']) && isset($_POST['cardID'])){
     wmGuessard();
-}else{
-    searchWmGuesscard(false);
 }
 ?>

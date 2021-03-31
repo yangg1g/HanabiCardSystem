@@ -81,17 +81,17 @@ function wm_card_code_mail(){
                         echo json_encode(array('code'=>"0"));
                     };
                 }else{
-                    echo json_encode(array('code'=>"4"));//超过邮箱发送限制
+                    echo json_encode(array('code'=>"4"));//超过uid发送限制
                 }
 
             }else{
                 echo json_encode(array('code'=>"3"));//不存在该用户
             }
         }else{
-            echo json_encode(array('code'=>"2"));//邮箱地址有误
+            echo json_encode(array('code'=>"2"));//uid有误
         }
     }else{
-        echo json_encode(array('code'=>"2"));//邮箱地址有误
+        echo json_encode(array('code'=>"2"));//uid有误
     }
 }
 wm_card_code_mail();

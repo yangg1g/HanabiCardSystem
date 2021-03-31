@@ -481,7 +481,7 @@ function gameStart(){
 			
 
 	}
-	//code0为邮箱格式错误1为双方有一方没有牌2为今天已经发起过挑战
+	//code0为uid格式错误1为双方有一方没有牌2为今天已经发起过挑战
 	echo $data;
 }
 gameStart()

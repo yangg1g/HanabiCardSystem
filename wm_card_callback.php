@@ -9,7 +9,7 @@ function callback_init(){
 		$add = $DB->getMysqlVersion() > '4.1' ? "ENGINE=".$type." DEFAULT CHARSET=".$dbcharset.";":"TYPE=".$type.";";
 		$sql = "CREATE TABLE  `".DB_PREFIX."wm_card` (
 		`id` mediumint(8) unsigned NOT NULL auto_increment,
-		`email` varchar(255) NOT NULL default '0',
+		`uid` varchar(255) NOT NULL default '0',
 		`cardID` longtext NOT NULL,
 		`cardCount` longtext NOT NULL,
 		`timeStamp` bigint(20) NOT NULL,

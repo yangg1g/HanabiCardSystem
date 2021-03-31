@@ -128,13 +128,12 @@ function wmBouerse($getMode,$updataMode){
 }
 function wmSearchUserBouerse(){
 	$DB = Database::getInstance();
-    $emailAddr = strip_tags($_POST['email']);
+    $uid = strip_tags($_POST['uid']);
     // $password = strip_tags($_POST['password']);
-    $checkmail="/^([a-zA-Z0-9])+([a-zA-Z0-9\?\*\[|\]%=~^\{\}\/\+!#&\$\._-])*@([a-zA-Z0-9_-])+\.([a-zA-Z0-9\._-]+)+$/";//定义正则表达式
-    if(isset($emailAddr) && $emailAddr!=""){
-        if(preg_match($checkmail,$emailAddr)){//用正则表达式函数进行判断  
-            $emailAddrMd5 = "\"".md5($emailAddr)."\"";
-            $mgid=$DB->query("SELECT * FROM ".DB_PREFIX."wm_card WHERE email=".$emailAddrMd5."");
+    if(isset($uid) && $uid!=""){
+        {//用正则表达式函数进行判断  
+            $uidMd5 = "\"".md5($uid)."\"";
+            $mgid=$DB->query("SELECT * FROM ".DB_PREFIX."wm_card WHERE uid=".$uidMd5."");
             $mgidinfo=$DB->fetch_array($mgid);
             if ($mgidinfo) {
 				$bouerseOutData = wmBouerse(false,false);
@@ -169,12 +168,9 @@ function wmSearchUserBouerse(){
 				$bouerseOutData = array('code'=>3);//无该用户
                 echo json_encode($bouerseOutData);
 			}
-		}else{
-			$bouerseOutData = array('code'=>2);//邮箱有误
-            echo json_encode($bouerseOutData);
 		}
 	}else{
-		$bouerseOutData = array('code'=>2);//邮箱有误
+		$bouerseOutData = array('code'=>2);//uid有误
         echo json_encode($bouerseOutData);
 	}
 }
@@ -198,22 +194,21 @@ function BouerseGailv($gailvYinzi){
 }
 function wmBuyBouerse(){
 	$DB = Database::getInstance();
-    $emailAddr = strip_tags($_POST['email']);
+    $uid = strip_tags($_POST['uid']);
     // $password = strip_tags($_POST['password']);
-    $checkmail="/^([a-zA-Z0-9])+([a-zA-Z0-9\?\*\[|\]%=~^\{\}\/\+!#&\$\._-])*@([a-zA-Z0-9_-])+\.([a-zA-Z0-9\._-]+)+$/";//定义正则表达式
-    if(isset($emailAddr) && $emailAddr!=""){
-        if(preg_match($checkmail,$emailAddr)){//用正则表达式函数进行判断  
-            $emailAddrMd5 = "\"".md5($emailAddr)."\"";
-            $mgid=$DB->query("SELECT * FROM ".DB_PREFIX."wm_card WHERE email=".$emailAddrMd5."");
+    if(isset($uid) && $uid!=""){
+        {//用正则表达式函数进行判断  
+            $uidMd5 = "\"".md5($uid)."\"";
+            $mgid=$DB->query("SELECT * FROM ".DB_PREFIX."wm_card WHERE uid=".$uidMd5."");
             $mgidinfo=$DB->fetch_array($mgid);
             if ($mgidinfo) {
-				$password = intval($_POST['password']);
+				//$password = intval($_POST['password']);
 				$bdPassword = intval($mgidinfo['verifyCode']);
-                if($password==$bdPassword&&$bdPassword!=0){
+                {
                     $timeStamp = time();
                     $passwordTime = intval($mgidinfo['verifyCodeStamp']);
                     $verifyCodeRemember = intval($mgidinfo['verifyCodeRemember']);
-                    if((($timeStamp - $passwordTime)<1800&&($timeStamp - $passwordTime)>0)||$verifyCodeRemember==1){
+                    {
 						wmBouerse(false,true);
 						$buyId = intval($_POST['id']);
 						$buyPrice = intval($_POST['price']);
@@ -290,53 +285,42 @@ function wmBuyBouerse(){
 						$wmBourseNowTrans = $bourseListOrigin['data'][$buyId]['trans'] + $buyValue;
 						$bourseListOrigin['data'][$buyId]['trans'] = $wmBourseNowTrans;
 						file_put_contents('bouerse.json', json_encode($bourseListOrigin),LOCK_EX);
-						$query = "Update ".DB_PREFIX."wm_card set verifyCodeRemember='".$verifyCodeRemember."' , starCount=".$starCountAfter." , bouerse='".$databaseBouerse."' where email=".$emailAddrMd5."";
+						$query = "Update ".DB_PREFIX."wm_card set verifyCodeRemember='".$verifyCodeRemember."' , starCount=".$starCountAfter." , bouerse='".$databaseBouerse."' where uid=".$uidMd5."";
 						$result=$DB->query($query);
-						$cardJsonData = array('mailMD5'=>md5($emailAddr),'name'=>$bourseList[$buyId]['name'],'value'=>$buyValue,'useStar'=>$shoudStar,'massageType'=>'bouerseBuy');
+						$cardJsonData = array('mailMD5'=>md5($uid),'name'=>$bourseList[$buyId]['name'],'value'=>$buyValue,'useStar'=>$shoudStar,'massageType'=>'bouerseBuy');
 						wmWriteJson($cardJsonData);
 						$bouerseOutData = array('code'=>202);//成功
 						echo json_encode($bouerseOutData);
-					}else{
-						//密码不对
-						$bouerseOutData = array('code'=>301);
-						echo json_encode($bouerseOutData);
 					}
-				}else{
-					//密码不对
-                    $bouerseOutData = array('code'=>301);
-					echo json_encode($bouerseOutData);
 				}
 			}else{
 				$bouerseOutData = array('code'=>3);//无该用户
                 echo json_encode($bouerseOutData);
 			}
-		}else{
-			$bouerseOutData = array('code'=>2);//邮箱有误
-            echo json_encode($bouerseOutData);
 		}
 	}else{
-		$bouerseOutData = array('code'=>2);//邮箱有误
+		$bouerseOutData = array('code'=>2);//uid有误
         echo json_encode($bouerseOutData);
 	}
 }
 function wmSellBouerse(){
 	$DB = Database::getInstance();
-    $emailAddr = strip_tags($_POST['email']);
+    $uid = strip_tags($_POST['uid']);
     // $password = strip_tags($_POST['password']);
     $checkmail="/^([a-zA-Z0-9])+([a-zA-Z0-9\?\*\[|\]%=~^\{\}\/\+!#&\$\._-])*@([a-zA-Z0-9_-])+\.([a-zA-Z0-9\._-]+)+$/";//定义正则表达式
-    if(isset($emailAddr) && $emailAddr!=""){
-        if(preg_match($checkmail,$emailAddr)){//用正则表达式函数进行判断  
-            $emailAddrMd5 = "\"".md5($emailAddr)."\"";
-            $mgid=$DB->query("SELECT * FROM ".DB_PREFIX."wm_card WHERE email=".$emailAddrMd5."");
+    if(isset($uid) && $uid!=""){
+        if(preg_match($checkmail,$uid)){//用正则表达式函数进行判断  
+            $uidMd5 = "\"".md5($uid)."\"";
+            $mgid=$DB->query("SELECT * FROM ".DB_PREFIX."wm_card WHERE uid=".$uidMd5."");
             $mgidinfo=$DB->fetch_array($mgid);
             if ($mgidinfo) {
-				$password = intval($_POST['password']);
+				//$password = intval($_POST['password']);
 				$bdPassword = intval($mgidinfo['verifyCode']);
-                if($password==$bdPassword&&$bdPassword!=0){
+                {
                     $timeStamp = time();
                     $passwordTime = intval($mgidinfo['verifyCodeStamp']);
                     $verifyCodeRemember = intval($mgidinfo['verifyCodeRemember']);
-                    if((($timeStamp - $passwordTime)<1800&&($timeStamp - $passwordTime)>0)||$verifyCodeRemember==1){
+                    {
 						wmBouerse(false,true);
 						$buyId = intval($_POST['id']);
 						$buyPrice = intval($_POST['price']);
@@ -417,44 +401,36 @@ function wmSellBouerse(){
 						}
 						$bourseListOrigin['data'][$buyId]['trans'] = $wmBourseNowTrans;
 						file_put_contents('bouerse.json', json_encode($bourseListOrigin),LOCK_EX);
-						$query = "Update ".DB_PREFIX."wm_card set verifyCodeRemember='".$verifyCodeRemember."' , starCount=".$starCountAfter." , bouerse='".$databaseBouerse."' where email=".$emailAddrMd5."";
+						$query = "Update ".DB_PREFIX."wm_card set verifyCodeRemember='".$verifyCodeRemember."' , starCount=".$starCountAfter." , bouerse='".$databaseBouerse."' where uid=".$uidMd5."";
 						$result=$DB->query($query);
-						$cardJsonData = array('mailMD5'=>md5($emailAddr),'name'=>$bourseList[$buyId]['name'],'value'=>$buyValue,'useStar'=>$getStar,'massageType'=>'bouerseSell');
+						$cardJsonData = array('mailMD5'=>md5($uid),'name'=>$bourseList[$buyId]['name'],'value'=>$buyValue,'useStar'=>$getStar,'massageType'=>'bouerseSell');
 						wmWriteJson($cardJsonData);
 						$bouerseOutData = array('code'=>202);//成功
 						echo json_encode($bouerseOutData);
-					}else{
-						//密码不对
-						$bouerseOutData = array('code'=>301);
-						echo json_encode($bouerseOutData);
 					}
-				}else{
-					//密码不对
-                    $bouerseOutData = array('code'=>301);
-					echo json_encode($bouerseOutData);
 				}
 			}else{
 				$bouerseOutData = array('code'=>3);//无该用户
                 echo json_encode($bouerseOutData);
 			}
 		}else{
-			$bouerseOutData = array('code'=>2);//邮箱有误
+			$bouerseOutData = array('code'=>2);//uid有误
             echo json_encode($bouerseOutData);
 		}
 	}else{
-		$bouerseOutData = array('code'=>2);//邮箱有误
+		$bouerseOutData = array('code'=>2);//uid有误
         echo json_encode($bouerseOutData);
 	}
 }
-if(isset($_POST['type']) && isset($_POST['email'])){
+if(isset($_POST['type']) && isset($_POST['uid'])){
 	if($_POST['type']=='search'){
 		wmSearchUserBouerse();
 	}else if($_POST['type']=='buy'){
-		if(isset($_POST['id'])&&isset($_POST['price'])&&isset($_POST['value'])&&isset($_POST['password'])&&isset($_POST['rememberPass'])){
+		if(isset($_POST['id'])&&isset($_POST['price'])&&isset($_POST['value'])){
 			wmBuyBouerse();
 		}
 	}else if($_POST['type']=='sell'){
-		if(isset($_POST['id'])&&isset($_POST['price'])&&isset($_POST['value'])&&isset($_POST['password'])&&isset($_POST['rememberPass'])){
+		if(isset($_POST['id'])&&isset($_POST['price'])&&isset($_POST['value'])){
 			wmSellBouerse();
 		}
 	}

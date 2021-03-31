@@ -46,14 +46,14 @@ function wm_card_loghook() {
 						<p class="jar_loading_text">正在炼制卡牌...</p>
 					</div>
 				</div>
-				<div class="wm_card_mailcheck" id="wmMailCheckBody">
+				<!--<div class="wm_card_mailcheck" id="wmMailCheckBody">
 					<input type="password" name="email" class="wm_card_email_starshop" id="wmPassword" placeholder="请输入密码或动态密码"><button type="button" class="wm_search_star_btn" id="wmGetPassword" data-email="">获取</button>
-					<div class="wm_card_remember_body type_left">
+					<div class="wm_card_remember_body">
 						<div class="wm_card_remember_box" title="公共场合慎用！" id="wmRememberPass">保存并永久使用该动态密码</div>
 					</div>
-				</div>
+				</div>--!>
 				<div class="wm_card_cardmix_input_body" id="wmCardMixInputBody">
-					<input type="text" name="email" class="wm_card_email_cardmix" id="wmCardMixInput" placeholder="请先输入邮箱查询卡牌" />
+					<input type="text" name="email" class="wm_card_email_cardmix" id="wmCardMixInput" placeholder="请先输入uid查询卡牌" />
 				</div>
 				<div class="wm_card_bouerse_buysell_input_body" id="wmBouerseBuySellInputBody">
 					<div class="wm_bouerse_sell_tips" id="wmBouserseSellTips">Tip:卖出将会收取5%且最低20星星的手续费</div>
@@ -63,7 +63,7 @@ function wm_card_loghook() {
 					</div>
 				</div>
 				<div class="wm_card_guesscard_input_body" id="wmGuesscardInputBody">
-					<input type="text" name="email" class="wm_card_email_guesscard" id="wmGuesscardInput" placeholder="请先输入邮箱查询结果" />
+					<input type="text" name="email" class="wm_card_email_guesscard" id="wmGuesscardInput" placeholder="请先输入uid查询结果" />
 				</div>
 				<div class="wm_card_guesscard_body" id="wmGuessCardBody">
 					<div class="wm_card_guesscard_title" id="wmGuessDayType"></div>
@@ -76,7 +76,7 @@ function wm_card_loghook() {
 					</div>
 				</div>
 				<div class="wm_card_bouerse_input_body" id="wmBouerseInputBody">
-					<input type="text" name="email" class="wm_card_email_bouerse" id="wmBouerseInput" placeholder="请先输入邮箱查询股市" />
+					<input type="text" name="email" class="wm_card_email_bouerse" id="wmBouerseInput" placeholder="请先输入uid查询股市" />
 				</div>
 				<div class="wm_card_bouerse_body" id="wmBouerseBody">
 					<div class="wm_star_count_body">
@@ -113,7 +113,7 @@ function wm_card_loghook() {
 				<div class="wm_card_demining_body" id="wmDeminingBody">
 					<p class="wm_card_demining_tip">Tip:第一次点击选中矿区，再次点击挖开矿区！</p>
 					<div class="wm_card_demining_input_body" id="wmDeminingInputBody">
-						<input type="text" name="email" class="wm_card_email_demining" id="wmDeminingInput" placeholder="请先输入邮箱然后挖掘星星" />
+						<input type="text" name="email" class="wm_card_email_demining" id="wmDeminingInput" placeholder="请先输入uid然后挖掘星星" />
 						<input type="hidden" id="clicaptcha-submit-info" name="clicaptcha-submit-info">
 					</div>
 					<div class="wm_card_demining_table_box">
@@ -139,7 +139,7 @@ function wm_card_loghook() {
 					<div class="wm_card_chain_choise_list" id="wmCardChainChoiseList"></div>
 				</div>
 				<div class="wm_card_starshop_input_body" id="wmStarSearchInputBody">
-					<input type="text" name="email" class="wm_card_email_starshop" id="wmStarSearchInput" placeholder="请先输入邮箱查询星星" />
+					<input type="text" name="email" class="wm_card_email_starshop" id="wmStarSearchInput" placeholder="请先输入uid查询星星" />
 				</div>
 				<div class="wm_card_starshop_body" id="starshopBody">
 					<div class="wm_star_count_body">
@@ -233,13 +233,13 @@ function wm_card_loghook() {
 				</div>
 				<h5 class="wm_card_chiose_title" id="alertTitle">每天一次神抽</h5>
 				<div class="wm_card_email_body" id="wmCardChioseInputBody">
-					<!-- <input type="text" name="email" class="wm_card_email" id="wm_card_email" placeholder="请先输入邮箱地址再点击卡片">
-					<div class="wm_card_remember_body">
-						<div class="wm_card_remember_box" title="公共场合慎用！" id="wmRememberEmail">抽卡并保存邮箱地址</div>
-					</div> -->
+				<input type="text" name="uid" class="wm_card_uid" id="wm_card_uid" placeholder="请先输入uid再点击卡片">
+				<div class="wm_card_remember_body">
+					<div class="wm_card_remember_box" title="公共场合慎用！" id="wmRememberEmail">抽卡并保存uid</div>
+				</div>
 				</div>
 				<div class="wm_card_restart_body">
-					<!-- <button type="button" class="wm_restart_btn" id="wm_card_restart_btn">换号重来</button> --><button type="button" class="wm_restart_btn" id="wm_card_rechiose_btn">再抽一次</button></div>
+				<!-- <button type="button" class="wm_restart_btn" id="wm_card_restart_btn">换号重来</button> --><button type="button" class="wm_restart_btn" id="wm_card_rechiose_btn">再抽一次</button></div>
 				<div class="cardList" id="wmCardList">
 				<div class="cardList_body" id="wmGetCard">
 					<div class="card selectcard" data-id="0">
@@ -281,7 +281,7 @@ function wm_card_loghook() {
 						</tbody>
 					</table>
 					<div class="wm_tiaozhan_body">
-						<input type="text" name="email" class="wm_card_email" id="wm_tiaozhan_email" placeholder="输入自己的邮箱地址挑战TA！">
+						<input type="text" name="email" class="wm_card_uid" id="wm_tiaozhan_email" placeholder="输入自己的uid挑战TA！">
 						<button type="button" class="wm_tiaozhan_btn" id="wm_tiaozhan_btn">挑战TA</button>
 					</div>
 					<div class="wm_mycard_list"></div>
