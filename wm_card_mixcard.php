@@ -1,17 +1,27 @@
 <?php
-require_once('../../../init.php');
+require_once('../../../source/class/class_core.php');	
+require_once('../../../source/function/function_home.php');	
 require_once('module.php');
-function mixCard(){
+// error_reporting(0);
+$discuz = C::app();
+
+$cachelist = array('magic','usergroups', 'diytemplatenamehome');
+$discuz->cachelist = $cachelist;
+$discuz->init();
+
+if(!defined('IN_DISCUZ')) {
+	exit('Access Denied');
+}
+function mixCard($uid){
     $data = null;
-    $uid = strip_tags($_POST['uid']);
     $cardIDArr = explode(",",strip_tags($_POST['cardID']));//1001,1002,1003
     $cardCountArr = explode(",",strip_tags($_POST['cardCount']));//1,2,1
     if(isset($uid) && $uid!=""){
         {//用正则表达式函数进行判断 
             if(count($cardIDArr)==count($cardCountArr)){//判断是否数据一致
-                $DB = Database::getInstance();
+                $DB = DB::object();
                 $uidMd5 = "\"".md5($uid)."\"";
-                $mgid=$DB->query("SELECT * FROM ".DB_PREFIX."wm_card WHERE uid=".$uidMd5."");
+                $mgid=$DB->query("SELECT * FROM pre_common_wm_card WHERE uid=".$uidMd5."");
                 $mgidinfo=$DB->fetch_array($mgid);
                 if ($mgidinfo) {
                     //有该用户
@@ -66,7 +76,7 @@ function mixCard(){
                                 $originCardCountText = implode(",",$originCarCountArr);
                                 //写入数据库
                                 $starCount = intval($mgidinfo['starCount'])+$addStarCount;
-                                $query = "Update ".DB_PREFIX."wm_card set verifyCodeRemember='".$verifyCodeRemember."' , cardCount='".$originCardCountText."' , starCount=".$starCount." where uid=".$uidMd5."";
+                                $query = "Update pre_common_wm_card set verifyCodeRemember='".$verifyCodeRemember."' , cardCount='".$originCardCountText."' , starCount=".$starCount." where uid=".$uidMd5."";
                                 $result=$DB->query($query);
                                 $data = json_encode(array('code'=>"202",'addStar'=>$addStarCount,'starCount'=>$starCount,'useCardNumbe'=>$useCardNumber)); //成功
                                 $cardJsonData = array('mailMD5'=>md5($uid),'addStar'=>$addStarCount,'useCardNumbe'=>$useCardNumber,'massageType'=>'mixcard');
@@ -88,7 +98,7 @@ function mixCard(){
     }
     echo $data;
 }
-if(isset($_POST['uid'])&&isset($_POST['cardID'])&&isset($_POST['cardCount'])){
-    mixCard();
+if(isset($_POST['cardID'])&&isset($_POST['cardCount'])){
+    mixCard($_G['uid']);
 }
 ?>

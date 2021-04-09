@@ -1,5 +1,17 @@
 <?php
-require_once('../../../init.php');
+require_once('../../../source/class/class_core.php');	
+require_once('../../../source/function/function_home.php');	
+require_once('module.php');
+// error_reporting(0);
+$discuz = C::app();
+
+$cachelist = array('magic','usergroups', 'diytemplatenamehome');
+$discuz->cachelist = $cachelist;
+$discuz->init();
+
+if(!defined('IN_DISCUZ')) {
+	exit('Access Denied');
+}
 function searchWmRank(){
     $wmRankJsonData = null;
     if(file_exists('cardRank.json')){//判断json文件是否存在
@@ -16,29 +28,29 @@ function searchWmRank(){
     echo json_encode($wmRankJsonData);
 }
 function searchWmDataBaseByRank(){
-    $DB = Database::getInstance();
+    $DB = DB::object();
     $mgidScore=$DB->query("
         SELECT *
-        FROM `".DB_PREFIX."wm_card`
-        ORDER BY `".DB_PREFIX."wm_card`.`score` DESC
+        FROM `pre_common_wm_card`
+        ORDER BY `pre_common_wm_card`.`score` DESC
         LIMIT 0 , 10
     ");
     $mgidCardLength=$DB->query("
         SELECT *
-        FROM `".DB_PREFIX."wm_card`
+        FROM `pre_common_wm_card`
         ORDER BY LENGTH(cardID) DESC
         LIMIT 0 , 10
     ");
     $mgidLevel=$DB->query("
         SELECT *
-        FROM `".DB_PREFIX."wm_card`
-        ORDER BY `".DB_PREFIX."wm_card`.`level` DESC
+        FROM `pre_common_wm_card`
+        ORDER BY `pre_common_wm_card`.`level` DESC
         LIMIT 0 , 10
     ");
     $mgidDeminingStarCount=$DB->query("
         SELECT *
-        FROM `".DB_PREFIX."wm_card`
-        ORDER BY `".DB_PREFIX."wm_card`.`deminingStarCount` DESC
+        FROM `pre_common_wm_card`
+        ORDER BY `pre_common_wm_card`.`deminingStarCount` DESC
         LIMIT 0 , 10
     ");
     $wmRankScoreArr = array();

@@ -1,11 +1,23 @@
 <?php
-require_once('../../../init.php');
+require_once('../../../source/class/class_core.php');	
+require_once('../../../source/function/function_home.php');	
 require_once('module.php');
-error_reporting(0);
+// error_reporting(0);
+$discuz = C::app();
+
+$cachelist = array('magic','usergroups', 'diytemplatenamehome');
+$discuz->cachelist = $cachelist;
+$discuz->init();
+
+if(!defined('IN_DISCUZ')) {
+	exit('Access Denied');
+}
+
 function getCardInfo($uidMD5){//获取卡片数组
-			$DB = Database::getInstance();
+			$DB = DB::object();
 			$comment_author_uid = "\"".$uidMD5."\"";
-			$mgid=$DB->query("SELECT * FROM ".DB_PREFIX."wm_card WHERE uid=".$comment_author_uid."");
+			$mgid=$DB->query("SELECT * FROM pre_common_wm_card WHERE uid=".$comment_author_uid."");
+			die("SELECT * FROM pre_common_wm_card WHERE uid=".$comment_author_uid."");
 			$mgidinfo=$DB->fetch_array($mgid);
 			//循环遍历卡组
 			$originCarIDArr = explode(",",$mgidinfo['cardID']);//1001,1002,1003
@@ -178,34 +190,34 @@ function setCry($cardData,$MyCardArr,$EMCardArr){//计算水晶攻击加成
 	
 }
 function setScore($Score,$uidMD5,$setBattleTime){
-	$DB = Database::getInstance();
+	$DB = DB::object();
 	if($Score>2147483647){
 		$Score = 2147483647;
 	}
 	$comment_author_uid = "\"".$uidMD5."\"";
 	if($setBattleTime==0){
-		$query = "Update ".DB_PREFIX."wm_card set score=".$Score." where uid=".$comment_author_uid."";
+		$query = "Update pre_common_wm_card set score=".$Score." where uid=".$comment_author_uid."";
 	}else{
 		$timeStamp = time();
-		$query = "Update ".DB_PREFIX."wm_card set score=".$Score." , battleStamp=".$timeStamp." where uid=".$comment_author_uid."";
+		$query = "Update pre_common_wm_card set score=".$Score." , battleStamp=".$timeStamp." where uid=".$comment_author_uid."";
 	}
 	$result=$DB->query($query);
 }
 function setLevel($level,$getexp,$uidMD5){
-	$DB = Database::getInstance();
+	$DB = DB::object();
 	if($level>2147483647){
 		$level = 2147483647;
 	}
 	$comment_author_uid = "\"".$uidMD5."\"";
-	$query = "Update ".DB_PREFIX."wm_card set level=".$level." , exp=".$getexp." where uid=".$comment_author_uid."";
+	$query = "Update pre_common_wm_card set level=".$level." , exp=".$getexp." where uid=".$comment_author_uid."";
 	$result=$DB->query($query);
 }
 function gameStart(){
 	$data = null;
 	$EMuid = strip_tags($_POST['EMuid']);
-	//$EMuid = "bcbe3365e6ac95ea2c0343a2395834dd";
+	// $EMuid = "d41d8cd98f00b204e9800998ecf8427e";
 	$Myuid = strip_tags($_POST['Myuid']);
-	//$Myuid = "202cb962ac59075b964b07152d234b70";
+	// $Myuid = "202cb962ac59075b964b07152d234b70";
 	{
 		$MyHP = 0;
 		$MyGong = 0;

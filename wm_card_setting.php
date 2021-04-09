@@ -1,8 +1,8 @@
 <?php
-require_once '../../../init.php';
-if(!defined('EMLOG_ROOT')) {exit('error!');}
+if(!defined('IN_DISCUZ')) {exit('error!');}
 session_start();   
-header("Content-Type: text/html;charset=utf-8");   
+header("Content-Type: text/html;charset=utf-8");
+
 function set_wmtoken() {   
     $_SESSION['wmtoken'] = md5(microtime(true));   
 };
@@ -98,9 +98,9 @@ if(!empty($_POST)&&valid_wmtoken()){
                 if(isset($uid) && $uid!=""){
                         {//用正则表达式函数进行判断  
                                 //uid正确
-                                $DB = Database::getInstance();
+                                $DB = DB::object();
                                 $send_uid = "\"".md5($uid)."\"";
-                                $mgid=$DB->query("SELECT * FROM ".DB_PREFIX."wm_card WHERE uid=".$send_uid."");
+                                $mgid=$DB->query("SELECT * FROM pre_common_wm_card WHERE uid=".$send_uid."");
                                 $mgidinfo=$DB->fetch_array($mgid);
                                 if (!$mgidinfo){
                                         echo '<div class="error_alert">无该用户</div>';
@@ -111,7 +111,7 @@ if(!empty($_POST)&&valid_wmtoken()){
                                                 echo '<div class="error_alert">请输入1以上的星星数量</div>';
                                         }else{
                                                 //开始赠送
-                                                $query = "Update ".DB_PREFIX."wm_card set starCount=starCount+".$starCount." where uid=".$send_uid."";
+                                                $query = "Update pre_common_wm_card set starCount=starCount+".$starCount." where uid=".$send_uid."";
                                                 $result=$DB->query($query);
                                                 echo '<div class="success_alert">成功给'.$uid.'赠送了'.$starCount.'个星星</div>';
                                         }

@@ -9,14 +9,15 @@ Author URL: http://wikimoe.com
 */
 !defined('IN_DISCUZ') && exit('access deined!');
 function wm_card_loghook() {
-	$wm_card_jsfile = .'source/module/wm_card/card/card.js?ver=0.9';
-	$wm_card_layerjsfile = .'source/module/wm_card/layer/layer.js';
-	$wm_card_layercssfile = .'source/module/wm_card/layer/theme/default/layer.css';
-	$wm_card_echartjsfile = .'source/module/wm_card/echart/echarts.simple.min.js';
-	$wm_card_cssfile = .'source/module/wm_card/card/card.css?ver=0.8';
-	$wm_card_pluginpath = .'source/module/wm_card/';
+	$wm_card_jsfile = './source/module/wm_card/card/card.js?ver=0.9';
+	$wm_card_layerjsfile = './source/module/wm_card/layer/layer.js';
+	$wm_card_layercssfile = './source/module/wm_card/layer/theme/default/layer.css';
+	$wm_card_echartjsfile = './source/module/wm_card/echart/echarts.simple.min.js';
+	$wm_card_cssfile = './source/module/wm_card/card/card.css?ver=0.8';
+	$wm_card_pluginpath = './source/module/wm_card/';
 	$wmClicaptchaJs = 'https://ssl.captcha.qq.com/TCaptcha.js';
-	// $wmClicaptchaCSS = .'source/module/wm_card/clicaptcha/css/captcha.css';
+	$jquery = './source/module/wm_card/card/jquery-1.7.1.js';
+	// $wmClicaptchaCSS = './source/module/wm_card/clicaptcha/css/captcha.css';
 	$wmCard_set=unserialize(ltrim(file_get_contents(dirname(__FILE__).'/wm_card.com.php'),'<?php die; ?>'));
 	$wm_card_img_path = empty($wmCard_set['cdn'])?$wm_card_pluginpath.'card/img/':$wmCard_set['cdn'];
 	$wm_donate_el = empty($wmCard_set['donate'])?'':'<div class="swiper-slide" data-type="donate" data-address="'.$wmCard_set['donate'].'"><img src="'.$wm_card_pluginpath.'/banner/banner2.jpg" /></div>';
@@ -133,8 +134,8 @@ function wm_card_loghook() {
 					<div class="wm_card_chain_choise_list" id="wmCardChainChoiseList"></div>
 				</div>
 				<div class="wm_card_starshop_input_body" id="wmStarSearchInputBody">
-					<input type="text" name="uid" class="wm_card_uid_starshop" id="wmStarSearchInput" placeholder="请先输入uid查询星星" />
-				</div>
+				<input type="text" name="uid" class="wm_card_uid_starshop" id="wmStarSearchInput" placeholder="请先输入uid查询星星" />
+			</div>
 				<div class="wm_card_starshop_body" id="starshopBody">
 					<div class="wm_star_count_body">
 						星星 × <span id="wm_my_star" data-star="0" data-mail="">--<span>
@@ -276,7 +277,7 @@ function wm_card_loghook() {
 					</table>
 					<div class="wm_tiaozhan_body">
 						<input type="text" name="uid" class="wm_card_uid" id="wm_tiaozhan_uid" placeholder="输入自己的uid挑战TA！">
-						<button type="button" class="wm_tiaozhan_btn" id="wm_tiaozhan_btn">挑战TA</button>
+						<button type="button" class="wm_tiaozhan_btn" id="wm_tiaozhan_btn" myuid='.$_G['uid'].'>挑战TA</button>
 					</div>
 					<div class="wm_mycard_list"></div>
 					<div class="wm_cardmore_body">
@@ -347,6 +348,7 @@ function wm_card_loghook() {
 				</div>
 			</div>
 		</div>';
+	echo '<script src="'.$jquery.'"></script>';
 	echo '<script src="'.$wm_card_layerjsfile.'"></script>';
 	echo '<script src="'.$wm_card_echartjsfile.'"></script>';
 	echo '<script src="'.$wmClicaptchaJs.'"></script>';
@@ -356,17 +358,5 @@ function wm_card_loghook() {
 	echo '<script>var wmCardImgPath = "'.$wm_card_img_path.'"</script>';
 	echo '<script>var wmDeminingCaptcha = "'.$wmCard_set['deminingCaptcha'].'";var wmDeminingCaptchaAppId = "'.$wmCard_set['appID'].'"</script>';
 }
-addAction('wm_card_plugin','wm_card_loghook');
-function wm_card_menu()
-{
-	echo '<div class="sidebarsubmenu" id="wm_card"><a href="./plugin.php?plugin=wm_card">卡牌设置</a></div>';
-}
-addAction('adm_sidebar_ext', 'wm_card_menu');
-function wm_card_backup(){
-	global $tables;
-	$DB = DB::object();
-	$is_exist_album_query = $DB->query('show tables like "pre_common_wm_card"');
-	if($DB->num_rows($is_exist_album_query) != 0) array_push($tables, 'wm_card');
-}
-addAction('data_prebakup', 'wm_card_backup');
+wm_card_loghook();
 ?>

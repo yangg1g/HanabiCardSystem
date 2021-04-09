@@ -1,6 +1,17 @@
 <?php
-require_once('../../../init.php');
+require_once('../../../source/class/class_core.php');	
+require_once('../../../source/function/function_home.php');	
 require_once('module.php');
+// error_reporting(0);
+$discuz = C::app();
+
+$cachelist = array('magic','usergroups', 'diytemplatenamehome');
+$discuz->cachelist = $cachelist;
+$discuz->init();
+
+if(!defined('IN_DISCUZ')) {
+	exit('Access Denied');
+}
 function deminingInit(){
     //初始化埋藏的星星生成星星地图
     $randomRowsCols = mt_rand(10,15);
@@ -87,24 +98,15 @@ function wxportWmDeminingGameMap(){
     $wmExportDeminingGameMap = array('mapType'=>$wmExportDeminingGameData['mapType'],'creatTime'=>$wmExportDeminingGameData['creatTime'],'map' => $wmExportMap ,'rows'=>$wmExportDeminingGameData['rows'],'cols'=>$wmExportDeminingGameData['cols'],'player'=>$wmExportDeminingGameData['player']);
     return $wmExportDeminingGameMap; 
 }
-function wmCheckDemNode($wmClickNode){
+function wmCheckDemNode($wmClickNode,$uid){
     // $wmCaptcha = $_POST['captcha'];
-    $Ticket = strip_tags($_POST['Ticket']);
-    $Randstr = strip_tags($_POST['Randstr']);
-    $UserIP = getIp();
-    if(!wmCaptchaCheck($Ticket,$Randstr,$UserIP)){
-        $wmNodeData = array('code'=>403);//验证码失败
-        echo json_encode($wmNodeData);
-        return false;
-    }
     
-    $DB = Database::getInstance();
-    $uid = strip_tags($_POST['uid']);
+    $DB = DB::object();
     // $password = strip_tags($_POST['password']);
     if(isset($uid) && $uid!=""){
         {//用正则表达式函数进行判断  
             $uidMd5 = "\"".md5($uid)."\"";
-            $mgid=$DB->query("SELECT * FROM ".DB_PREFIX."wm_card WHERE uid=".$uidMd5."");
+            $mgid=$DB->query("SELECT * FROM pre_common_wm_card WHERE uid=".$uidMd5."");
             $mgidinfo=$DB->fetch_array($mgid);
             if ($mgidinfo) {
                 //有该用户
@@ -171,7 +173,7 @@ function wmCheckDemNode($wmClickNode){
                                 $timeStamp = $deminingStamp;
                             }
                             //更新数据库
-                            $query = "Update ".DB_PREFIX."wm_card set level=".$levelSet." , exp=".$GetEXPSet.", deminingStamp=".$timeStamp.", starCount=starCount+".$randomStar.", deminingStarCount=deminingStarCount+".$randomStar." where uid=".$uidMd5."";
+                            $query = "Update pre_common_wm_card set level=".$levelSet." , exp=".$GetEXPSet.", deminingStamp=".$timeStamp.", starCount=starCount+".$randomStar.", deminingStarCount=deminingStarCount+".$randomStar." where uid=".$uidMd5."";
                             $result=$DB->query($query);
                             //更新缓存数据
                             $clickNodeResault = wxportWmDeminingGameMap();
@@ -218,10 +220,10 @@ function openNode($i,$j,$rows,$cols,$wmDeminingGameData,$wmDeminingGameDataMap){
     $data["open".$i."_".$j] = 1;//打开节点
     return $data;
   } 
-if(isset($_POST['type'])=='open' && isset($_POST['uid'])){
+if(isset($_POST['type'])=='open'){
     if(strip_tags($_POST['type'])=='open'){
         $wmClickNode = $_POST['node'];
-        wmCheckDemNode($wmClickNode);
+        wmCheckDemNode($wmClickNode,$_G['uid']);
     }else{
         startWmDeminingGame();
     }

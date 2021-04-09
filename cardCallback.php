@@ -1,26 +1,31 @@
 <?php
-require_once('../../../init.php');	
+require_once('../../../source/class/class_core.php');	
+require_once('../../../source/function/function_home.php');	
 require_once('module.php');
-error_reporting(0);
-function wm_cardWrite(){
-	$DB = Database::getInstance();
+// error_reporting(0);
+$discuz = C::app();
+
+$cachelist = array('magic','usergroups', 'diytemplatenamehome');
+$discuz->cachelist = $cachelist;
+$discuz->init();
+
+if(!defined('IN_DISCUZ')) {
+	exit('Access Denied');
+}
+
+function wm_cardWrite($uid){
+	$DB = DB::object();
 	$data = null;
-	$uid = strip_tags($_POST['uid']);
-	//$uid = "2343";
+	// $uid = "2343";
 	$choiseIndex = intval(strip_tags($_POST['choiseIndex']));
-	//$choiseIndex = 0;
+	// $choiseIndex = 0;
 	if(isset($uid) && $uid!=""){
 		{//用正则表达式函数进行判断  
            //uid正确
-		   	$comment_author_uid = "\"".$uidAddr."\"";
-			$sql = "SELECT cid as author_count FROM ".DB_PREFIX."comment WHERE mail = ".$comment_author_uid." and hide ='n'";
-			$res = $DB->query($sql);
-			$author_count = mysqli_num_rows($res);
-			//if($author_count<1){
 			{
-				//评论表里有
 				$comment_author_uid = "\"".md5($uid)."\"";
-				$mgid=$DB->query("SELECT * FROM ".DB_PREFIX."wm_card WHERE uid=".$comment_author_uid."");
+				$mgid=$DB->query("SELECT * FROM pre_common_wm_card WHERE uid=".$comment_author_uid."");
+				
 				$mgidinfo=$DB->fetch_array($mgid);
 				$timeStamp = time();
 				$wmoriginDate = null;
@@ -54,7 +59,7 @@ function wm_cardWrite(){
 						}
 					}else{
 						$leftGetChance = $canGetCardChance+$canGetCardChancePlus;
-						$query = "Update ".DB_PREFIX."wm_card set todayCount=0 where uid=".$comment_author_uid."";
+						$query = "Update pre_common_wm_card set todayCount=0 where uid=".$comment_author_uid."";
 						$result=$DB->query($query);
 					}
 				}
@@ -88,7 +93,7 @@ function wm_cardWrite(){
 						wmWriteJson($cardJsonData);
 						//判断数据库是否存在这个用户的抽奖信息
 						if (!$mgidinfo) {
-							$sqli="INSERT INTO ".DB_PREFIX."wm_card (uid,cardID,cardCount,timeStamp,todayCount,score,level,exp,battleStamp,exData,starCount,verifyCode,verifyCodeStamp,verifyCodeCount,bouerse,guessCard) VALUES(".$comment_author_uid.",'".$randomCardID."','1',".$timeStamp.",1,0,0,0,".$timeStamp.",'',0,0,0,0,'','')";
+							$sqli="INSERT INTO pre_common_wm_card (uid,cardID,cardCount,timeStamp,todayCount,score,level,exp,battleStamp,exData,starCount,verifyCode,verifyCodeStamp,verifyCodeCount,bouerse,guessCard) VALUES(".$comment_author_uid.",'".$randomCardID."','1',".$timeStamp.",1,0,0,0,".$timeStamp.",'',1250,0,0,0,'','')";
 							$DB->query($sqli);
 						}else{
 							$originCarID = $mgidinfo['cardID'];
@@ -96,7 +101,7 @@ function wm_cardWrite(){
 							//循环遍历卡组
 							$callBackCardInfo = wmAddCard($originCarID,$originCardCount,$randomCardID);
 
-							$query = "Update ".DB_PREFIX."wm_card set cardID='".$callBackCardInfo['originCarIDText']."' , cardCount='".$callBackCardInfo['originCardCountText']."' , timeStamp=".$timeStamp." , todayCount=todayCount+1 where uid=".$comment_author_uid."";
+							$query = "Update pre_common_wm_card set cardID='".$callBackCardInfo['originCarIDText']."' , cardCount='".$callBackCardInfo['originCardCountText']."' , timeStamp=".$timeStamp." , todayCount=todayCount+1 where uid=".$comment_author_uid."";
 							$result=$DB->query($query);
 						}
 						$data = json_encode(array('code'=>"202",'card'=>$randomCardID,'uidmd5'=>md5($uid),'todaycount'=>$originToday,'cardChoiseList'=>$cardChoiseList,'choiseIndex'=>$choiseIndex,'leftGetChance'=>$leftGetChance));
@@ -113,5 +118,5 @@ function wm_cardWrite(){
 	//0为uid为空，1为uid不合格，2为今天已经抽过了，3为评论表里找不到uid，4为空牌，202为正常输出
 	echo $data;
 }
-wm_cardWrite();
+wm_cardWrite($_G['uid']);
 ?>

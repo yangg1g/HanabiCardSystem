@@ -1,17 +1,27 @@
 <?php
-require_once('../../../init.php');
+require_once('../../../source/class/class_core.php');	
+require_once('../../../source/function/function_home.php');	
 require_once('module.php');
-function buyCard(){
-    $uid = strip_tags($_POST['uid']);
+// error_reporting(0);
+$discuz = C::app();
+
+$cachelist = array('magic','usergroups', 'diytemplatenamehome');
+$discuz->cachelist = $cachelist;
+$discuz->init();
+
+if(!defined('IN_DISCUZ')) {
+	exit('Access Denied');
+}
+function buyCard($uid){
     //$uid = "123";
     $buyType = intval($_POST['type']);
     //$buyType = 4;
     $data = null;
     if(isset($uid) && $uid!=""){
         {//用正则表达式函数进行判断 
-            $DB = Database::getInstance();
+            $DB = DB::object();
             $uidMD5 = "\"".md5($uid)."\"";
-            $mgid=$DB->query("SELECT * FROM ".DB_PREFIX."wm_card WHERE uid=".$uidMD5."");
+            $mgid=$DB->query("SELECT * FROM pre_common_wm_card WHERE uid=".$uidMD5."");
             $mgidinfo=$DB->fetch_array($mgid);
             if ($mgidinfo) {
                 {
@@ -94,7 +104,7 @@ function buyCard(){
                             if($starCountAfter<0){
                                 $starCountAfter = 0;
                             }
-                            $query = "Update ".DB_PREFIX."wm_card set verifyCodeRemember='".$verifyCodeRemember."' , cardID='".$originCarIDText."' , cardCount='".$originCardCountText."' , starCount=".$starCountAfter." where uid=".$uidMD5."";
+                            $query = "Update pre_common_wm_card set verifyCodeRemember='".$verifyCodeRemember."' , cardID='".$originCarIDText."' , cardCount='".$originCardCountText."' , starCount=".$starCountAfter." where uid=".$uidMD5."";
                             $result=$DB->query($query);
 
                             $json_string = json_decode(file_get_contents('cardData.json'), true);//查询卡牌数据
@@ -125,7 +135,7 @@ function buyCard(){
                             if($starCountAfter<0){
                                 $starCountAfter = 0;
                             }
-                            $query = "Update ".DB_PREFIX."wm_card set verifyCodeRemember='".$verifyCodeRemember."' , cardID='".$originCarID."' , cardCount='".$originCardCount."' , starCount=".$starCountAfter." where uid=".$uidMD5."";
+                            $query = "Update pre_common_wm_card set verifyCodeRemember='".$verifyCodeRemember."' , cardID='".$originCarID."' , cardCount='".$originCardCount."' , starCount=".$starCountAfter." where uid=".$uidMD5."";
                             $result=$DB->query($query);
                             $data = json_encode(array('code'=>"202" , 'card'=>$chainChioseCardId ,'starCountAfter'=>$starCountAfter ,'buyClass'=>$buyClass));
 
@@ -151,7 +161,7 @@ function buyCard(){
     echo $data;
 }
 //if(isset($_POST['uid'])&&isset($_POST['type'])){
-    buyCard();
+    buyCard($_G['uid']);
 //}
 
 ?>

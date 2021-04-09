@@ -54,29 +54,15 @@
 $(document).ready(function(e) {
 	//猜卡
 	function getGuesscard(){
-		layer.open({
-			type: 1,
-			title:'查询信息',
-			zIndex:1003,
-			content:$('#wmGuesscardInputBody'),
-			btn: ['查询','取消'], //按钮
-			btn1 :function(index){
-				var info = {
-					'type':2,
-					'uid':$('#wmGuesscardInput').val(),
-					'cardID':'',
-				}
-				wmGetguesscardInfo(index,info);
-			}
-		});
+		var info = {
+			'type':2,
+			'cardID':'',
+		}
+		wmGetguesscardInfo(1,info);
 	}
 	var guessBodyIndex = null;//猜卡窗口ID
 	function wmGetguesscardInfo(index,info){
-		var wmUid = info.uid;
-		if(wmUid === ""){ //输入不能为空
-			layer.alert("wmGetguesscardInfouid不能为空");
-	　　　　return false;
-	　　}else{
+		{
 			var wmCardBouersepath_ = wmCardPluginpath + 'wm_card_guesscard.php';
 			$('#wmCardLoading').stop(true, false).fadeIn(100);
 			
@@ -85,7 +71,6 @@ $(document).ready(function(e) {
 				url: wmCardBouersepath_,
 				data: info,
 				success: function(result){
-					
 					if(result.code==202){
 						if(info.type==2){
 							//查询
@@ -240,17 +225,13 @@ $(document).ready(function(e) {
 	// -----------------------------------------------------------------------------------------------
 	//股市
 	function wmGetBouerseInfo(index){
-		var wmUid = $('#wmBouerseInput').val();
-		if(wmUid === ""){ //输入不能为空
-			layer.alert("wmGetBouerseInfouid不能为空");
-	　　　　return false;
-	　　}else{
+		{
 			var wmCardBouersepath_ = wmCardPluginpath + 'wm_card_bouerse.php';
 			$('#wmCardLoading').stop(true, false).fadeIn(100);
 			$.ajax({
 				type: 'POST',
 				url: wmCardBouersepath_,
-				data: {type:'search',uid:wmUid},
+				data: {type:'search'},
 				success: function(result){
 					console.log(result);
 					if(result.code==202){
@@ -343,7 +324,7 @@ $(document).ready(function(e) {
 					$('#wmCardLoading').stop(true, false).fadeOut(100);
 				},
 				error:function(){
-					layer.alert('网络异常！');
+					layer.alert('wmGetBouerseInfo网络异常！');
 					$('#wmCardLoading').stop(true, false).fadeOut(100);
 				},
 				dataType: 'json'
@@ -526,21 +507,17 @@ $(document).ready(function(e) {
 					}
 					var inputValueWindow = index;
 					{
-							var wmUid = $('#wmBouerseInput').val();
 							//var wmPassword = $('#wmPassword').val();
 							var wmTransId = $('#wmBouerseBuySellInput').attr('data-id');
 							var wmPrice = $('#wmBouerseChartOneInfo').attr('data-price');
 							var wmValue = $('#wmBouerseBuySellInput').val();
-							if(wmUid === ""){ //输入不能为空
-								layer.alert("btn1uid不能为空");
-						　　　　return false;
-							}else{
+							{
 								var wmCardStarpath_ = wmCardPluginpath + 'wm_card_bouerse.php';
 								$('#wmCardLoading').stop(true, false).fadeIn(100);
 								$.ajax({
 									type: 'POST',
 									url: wmCardStarpath_,
-									data: {type:wmType,uid:wmUid,id:wmTransId,price:wmPrice,value:wmValue},
+									data: {type:wmType,id:wmTransId,price:wmPrice,value:wmValue},
 									success: function(result){
 										if(result.code==202){
 											layer.alert('交易成功！');
@@ -588,7 +565,7 @@ $(document).ready(function(e) {
 										$('#wmCardLoading').stop(true, false).fadeOut(100);
 									},
 									error:function(){
-										layer.alert('网络异常！');
+										layer.alert('wmBouerseGoTrans网络异常！');
 										$('#wmCardLoading').stop(true, false).fadeOut(100);
 									},
 									dataType: 'json'
@@ -629,26 +606,6 @@ $(document).ready(function(e) {
 	// 	}
 	// }
 	//设置默认uid
-	function wmSetDefaultMaillAddress(mailAddr){
-		$('#wm_card_uid').val(mailAddr);
-		$('#wmDeminingInput').val(mailAddr);
-		$('#wmStarSearchInput').val(mailAddr);
-		$('#wmCardMixInput').val(mailAddr);
-		$('#wm_tiaozhan_uid').val(mailAddr);
-		$('#wmBouerseInput').val(mailAddr);
-		$('#wmGuesscardInput').val(mailAddr);
-		localStorage.setItem("wmSetDefaultMaillAddress", mailAddr);
-		//$('#wmRememberEmail').addClass('active');
-	}
-	function wmDelDefaultMaillAddress(){
-		$('#wmDeminingInput').val('');
-		$('#wmStarSearchInput').val('');
-		$('#wmCardMixInput').val('');
-		//$('#wm_tiaozhan_uid').val('');
-		$('#wmBouerseInput').val('');
-		$('#wmGuesscardInput').val('');
-		localStorage.removeItem("wmSetDefaultMaillAddress");
-	}
 	// function wmSetsessionStorageMail(){
 	// 	var wmSetsessionStorageMailCache = localStorage.getItem("wmSetDefaultMaillAddress");
 	// 	if(wmSetsessionStorageMailCache!=null&&wmSetsessionStorageMailCache!=undefined&&wmSetsessionStorageMailCache!=''){
@@ -681,7 +638,7 @@ $(document).ready(function(e) {
 				$('#wmCardLoading').stop(true, false).fadeOut(100);
 			},
 			error:function(){
-				layer.alert('网络异常！');
+				layer.alert('getwmStarDemMap网络异常！');
 				$('#wmCardLoading').stop(true, false).fadeOut(100);
 			},
 			dataType: 'json'
@@ -714,13 +671,9 @@ $(document).ready(function(e) {
 	}
 	$('#wmDeminingBody table').on('click','.wm_demining_item',function(){
 		var wmDMinfo = $(this).attr('data-info');
-		var wmUid = $('#wmDeminingInput').val();
 		if(wmDMinfo!=='opened'){
 			if($(this).hasClass('selected')){
-				if(wmUid === ""){ //输入不能为空
-					layer.alert("wmDeminingBodyuid不能为空");
-			　　　　return false;
-			　　}else{
+				{
 					function getUidAndDem(ticket,randstr){
 						console.log($('#clicaptcha-submit-info').val());
 						var wmCardStarpath_ = wmCardPluginpath + 'wm_game_demining.php';
@@ -728,7 +681,7 @@ $(document).ready(function(e) {
 						$.ajax({
 							type: 'POST',
 							url: wmCardStarpath_,
-							data: {type:'open',node:wmDMinfo,uid:wmUid,Ticket:ticket,Randstr:randstr},
+							data: {type:'open',node:wmDMinfo},
 							success: function(result){
 								if(result.code == 202){
 									if(result.boom==0){
@@ -749,7 +702,7 @@ $(document).ready(function(e) {
 									getNewCardList();
 									setwmStarDemMap(result);
 									var wmNowTime = result.timeStamp * 1000;
-									localStorage.setItem("demining" + md5(wmUid),wmNowTime);
+									localStorage.setItem("demining",wmNowTime);
 								}else if(result.code == 2){
 									layer.alert('wmDeminingBodyuid有误！');
 								}else if(result.code == 3){
@@ -764,7 +717,7 @@ $(document).ready(function(e) {
 											(wmNextTimeDate.getMinutes()) + "分" + 
 											(wmNextTimeDate.getSeconds()) + "秒";
 									layer.alert('感觉身体被掏空，会在 '+wmNextTimeText+' 后恢复！请在这个点后再来！');
-									localStorage.setItem("demining" + md5(wmUid),result.deminingStamp*1000);
+									localStorage.setItem("demining",result.deminingStamp*1000);
 								}else if(result.code == 0){
 									layer.alert('传入的信息有误，不要搞事情喔！');
 								}else if(result.code == 403){
@@ -777,7 +730,7 @@ $(document).ready(function(e) {
 							},
 							error:function(){
 								$('#wmCardLoading').stop(true, false).fadeOut(100);
-								layer.alert('网络异常！');
+								layer.alert('wmDeminingBody网络异常！');
 							},
 							dataType: 'json'
 						});
@@ -808,7 +761,7 @@ $(document).ready(function(e) {
 							getUidAndDem();
 						}
 					}
-					var deminingTime = Number(localStorage.getItem("demining" + md5(wmUid)));
+					var deminingTime = Number(localStorage.getItem("demining"));
 					if(deminingTime == null){
 						wmDeminingCaptchaFcuntion();
 					}else{
@@ -949,7 +902,7 @@ $(document).ready(function(e) {
 				}
 			},
 			error:function(){
-				layer.alert('网络异常！');
+				layer.alert('searchWmRank网络异常！');
 			},
 			dataType: 'json'
 		});
@@ -974,24 +927,16 @@ $(document).ready(function(e) {
 	});
 	//查询星星方法
 	function searchStar(windowIndex,starShopOpen){
-		var wmStarSearchInput = $('#wmStarSearchInput').val();
-		if(wmStarSearchInput === ""){ //输入不能为空
-	　　　　layer.alert("wmStarSearchInputuid不能为空");
-	　　　　return false;
-	　　}
-		else{
-			var starUidmd5_ = md5(wmStarSearchInput);
+		{
 			var wmCardStarpath_ = wmCardPluginpath + 'wm_search_star.php';
-			$('#wmCardLoading').stop(true, false).fadeIn(100);
 			$.ajax({
 				type: 'POST',
 				url: wmCardStarpath_,
-				data: {uid:starUidmd5_},
+				data: {},
 				success: function(result){
 					if(result.code=="202"){
 						$('#wm_my_star').empty();
 						$('#wm_my_star').attr('data-star',result.star);
-						$('#wm_my_star').attr('data-mail',wmStarSearchInput);
 						$('#wm_my_star').text(result.star);
 						if(windowIndex||windowIndex==0){
 							layer.close(windowIndex);
@@ -1024,16 +969,7 @@ $(document).ready(function(e) {
 	//查询星星弹窗
 	function openStarSearchWindow(starShopIsOpen){
 		var starShopIsOpen = starShopIsOpen;
-		layer.open({
-			type: 1,
-			title:'查询星星',
-			zIndex:1003,
-			content:$('#wmStarSearchInputBody'),
-			btn: ['查询','取消'], //按钮
-			btn1 :function(index){
-				searchStar(index,starShopIsOpen);
-			}
-		});
+		searchStar(1,starShopIsOpen);
 	}
 	//获取动态密码
 	
@@ -1152,20 +1088,17 @@ $(document).ready(function(e) {
 					// 	content:$('#wmMailCheckBody'),
 					// 	btn: ['确定','取消'], //按钮
 					// 	btn1 :function(index){
-							var embuyuid = $('#wm_my_star').attr('data-mail');
 							var emBuyType = this_.attr('data-type');
-							if(embuyuid === ""){ //输入不能为空
-								layer.alert("wmGet uid不能为空");
-						　　　　return false;
-						　　}else{
+							{
 								var wmCardStarpath_ = wmCardPluginpath + 'wm_card_buy.php';
 								$('#wmCardLoading').stop(true, false).fadeIn(100);
 								$.ajax({
 									type: 'POST',
 									url: wmCardStarpath_,
-									data: {uid:embuyuid,type:emBuyType},
+									data: {type:emBuyType},
 									success: function(result){
 										$('#wmCardLoading').stop(true, false).fadeOut(100);
+										console.log(result);
 										if(result.code=="202"){
 											if(result.buyClass == 2){
 												$('#wmCardChainChoiseList').empty();
@@ -1185,13 +1118,13 @@ $(document).ready(function(e) {
 													},
 													btn2 :function(){
 														if($('#wm_card_uid').val()==$('#wm_my_star').attr('data-mail')){
-															wmsearchCard(md5(embuyuid));
+															wmsearchCard();
 														}
 														getNewCardList();
 													},
 													cancel: function(){ 
 														if($('#wm_card_uid').val()==$('#wm_my_star').attr('data-mail')){
-															wmsearchCard(md5(embuyuid));
+															wmsearchCard();
 														}
 														getNewCardList();
 													}
@@ -1205,7 +1138,7 @@ $(document).ready(function(e) {
 													this_.rotate_box();
 												},200);
 												if($('#wm_card_uid').val()==$('#wm_my_star').attr('data-mail')){
-													wmsearchCard(md5(embuyuid));
+													wmsearchCard();
 												}
 												getNewCardList();
 											}
@@ -1231,7 +1164,7 @@ $(document).ready(function(e) {
 										}
 									},
 									error:function(){
-										layer.alert('网络异常！');
+										layer.alert('selectedcard网络异常！');
 										$('#wmCardLoading').stop(true, false).fadeOut(100);
 									},
 									dataType: 'json'
@@ -1374,7 +1307,7 @@ $(document).ready(function(e) {
 					});
 				}
 			},error:function(){
-				layer.alert('网络异常！');
+				layer.alert('wmCardMixCardDatabase网络异常！');
 				$('#wmCardLoading').stop(true, false).fadeOut(100);
 			},
 			dataType: 'json'
@@ -1401,17 +1334,13 @@ $(document).ready(function(e) {
 		console.log(wmSendCardID);
 		console.log(wmSendCardCount);
 		{
-				var wmMixcardUid = $('#wmCardMixInput').val();
-				if(wmMixcardUid === ""){ //输入不能为空
-					layer.alert("wmMixCarduid不能为空");
-			　　　　return false;
-				}else{
+			{
 					var wmCardStarpath_ = wmCardPluginpath + 'wm_card_mixcard.php';
 					$('#wmCardLoading').stop(true, false).fadeIn(100);
 					$.ajax({
 						type: 'POST',
 						url: wmCardStarpath_,
-						data: {uid:wmMixcardUid,cardID:wmSendCardID,cardCount:wmSendCardCount},
+						data: {cardID:wmSendCardID,cardCount:wmSendCardCount},
 						success: function(result){
 							$('#wmCardLoading').stop(true, false).fadeOut(100);
 							if(result.code=="202"){
@@ -1439,7 +1368,7 @@ $(document).ready(function(e) {
 							}
 						},
 						error:function(){
-							layer.alert('网络异常！');
+							layer.alert('wmMixCard网络异常！');
 							$('#wmCardLoading').stop(true, false).fadeOut(100);
 						},
 						dataType: 'json'
@@ -1477,18 +1406,13 @@ $(document).ready(function(e) {
 	};
 	//星星分解用到的卡牌查询
 	function wmMixSearchCard(alertWindowIndex,showModWindow){
-		var wmMixCarduid = $('#wmCardMixInput').val();
-		if(wmMixCarduid === ""){ //输入不能为空
-			layer.alert("wmMixSearchCarduid不能为空");
-	　　　　return false;
-	　　}else{
+		{
 			$('#wmCardLoading').stop(true, false).fadeIn(100);
-			var uidmd5_ = md5(wmMixCarduid);
 			var wmCardPluginpath_ = wmCardPluginpath + 'wm_card_search.php';
 			$.ajax({
 				type: 'POST',
 				url: wmCardPluginpath_,
-				data: {uid:uidmd5_},
+				data: {},
 				success: function(result){
 					console.log(result);
 					if(result.code=="202"){
@@ -1499,7 +1423,7 @@ $(document).ready(function(e) {
 					}
 				},
 				error:function(){
-					layer.alert('网络异常！');
+					layer.alert('wmMixSearchCard网络异常！');
 					$('#wmCardLoading').stop(true, false).fadeOut(100);
 				},
 				dataType: 'json'
@@ -1508,29 +1432,11 @@ $(document).ready(function(e) {
 	}
 	// 股市
 	function getwmBouerse(){
-		layer.open({
-			type: 1,
-			title:'查询股票',
-			zIndex:1003,
-			content:$('#wmBouerseInputBody'),
-			btn: ['查询','取消'], //按钮
-			btn1 :function(index){
-				wmGetBouerseInfo(index);
-			}
-		});
+		wmGetBouerseInfo(1);
 	}
 	// 星星分解
 	function openCardMixWindow(){
-		layer.open({
-			type: 1,
-			title:'查询卡牌',
-			zIndex:1003,
-			content:$('#wmCardMixInputBody'),
-			btn: ['查询','取消'], //按钮
-			btn1 :function(index){
-				wmMixSearchCard(index,true);
-			}
-		});
+		wmMixSearchCard(1,true);
 	}
 
 	var chiosed = false;
@@ -1967,13 +1873,11 @@ $(document).ready(function(e) {
 	}
 	$('#wm_tiaozhan_btn').attr('data-md5',addrmd5);
 	$('#wm_tiaozhan_btn').on('click',function(){
-		var wmUid = $('#wm_tiaozhan_uid').val();
-		if(wmUid === ""){ //输入不能为空
-			layer.alert("wm_tiaozhan_btnuid不能为空");
-	　　　　return false;
-	　　}else{
-			var MyUidMD5 = md5(wmUid);
+		{
+			var MyUidMD5 = md5($('#wm_tiaozhan_btn').attr('myuid'));
 			var EMUidMD5 = $('#wm_tiaozhan_btn').attr('data-md5');
+			alert(MyUidMD5);
+			alert(EMUidMD5);
 			gameInit(MyUidMD5,EMUidMD5);
 			
 		}
@@ -1984,7 +1888,6 @@ $(document).ready(function(e) {
 			return false;
 		}
 		var wmCardPluginpath_ = wmCardPluginpath + 'cardCallback.php';
-		var uid = $('#wm_card_uid').val();
 		
 		var choiseIndex = $(this).attr('data-id');{
 		chiosed = true;
@@ -1992,7 +1895,7 @@ $(document).ready(function(e) {
 	　　　　$.ajax({
 			  type: 'POST',
 			  url: wmCardPluginpath_,
-			  data: {uid:uid,choiseIndex:choiseIndex},
+			  data: {choiseIndex:choiseIndex},
 			  success: function(result){
 				  console.log(result);
 				  //0为uid为空，1为uid不合格，2为今天已经抽过了，3为评论表里找不到uid，202

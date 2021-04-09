@@ -1,20 +1,29 @@
 <?php
-require_once('../../../init.php');
+require_once('../../../source/class/class_core.php');	
+require_once('../../../source/function/function_home.php');	
 require_once('module.php');
+// error_reporting(0);
+$discuz = C::app();
+
+$cachelist = array('magic','usergroups', 'diytemplatenamehome');
+$discuz->cachelist = $cachelist;
+$discuz->init();
+
+if(!defined('IN_DISCUZ')) {
+	exit('Access Denied');
+}
 error_reporting(0);
-function wmGuessard(){
-    $DB = Database::getInstance();
-    $uid = strip_tags($_POST['uid']);
-    $uid = "123";
+function wmGuessard($uid){
+    $DB = DB::object();
+    // $uid = "123";
     $guessType = strip_tags($_POST['type']);
-    $guessType = 2;
+    // $guessType = 2;
     $guessSelCard = strip_tags($_POST['cardID']);
     // $password = strip_tags($_POST['password']);
-    $checkmail="/^([a-zA-Z0-9])+([a-zA-Z0-9\?\*\[|\]%=~^\{\}\/\+!#&\$\._-])*@([a-zA-Z0-9_-])+\.([a-zA-Z0-9\._-]+)+$/";//定义正则表达式
     if(isset($uid) && $uid!=""){
         {//用正则表达式函数进行判断  
             $uidMd5 = "\"".md5($uid)."\"";
-            $mgid=$DB->query("SELECT * FROM ".DB_PREFIX."wm_card WHERE uid=".$uidMd5."");
+            $mgid=$DB->query("SELECT * FROM pre_common_wm_card WHERE uid=".$uidMd5."");
             $mgidinfo=$DB->fetch_array($mgid);
             if ($mgidinfo) {
                 $guesscardData = searchWmGuesscard(true);
@@ -30,13 +39,6 @@ function wmGuessard(){
                         echo json_encode($wmGuesscardPut);
                         return false;
                     }else{
-                        $password = intval($_POST['password']);
-                        if(!wmPasswordCheck($mgidinfo,$password)){
-                            //密码不对
-                            $wmGuesscardPut = array('code'=>301);
-                            echo json_encode($wmGuesscardPut);
-                            return false;
-                        }
                         if($myStar<10){
                             //星星不足
                             $wmGuesscardPut = array('code'=>302);
@@ -90,7 +92,7 @@ function wmGuessard(){
 						if($rememberPass==1){
 							$verifyCodeRemember = 1;
 						}
-                        $query = "Update ".DB_PREFIX."wm_card set verifyCodeRemember='".$verifyCodeRemember."' , guessCard='".json_encode($myGuesscardDatabase)."' , starCount=".$starCountAfter."  where uid=".$uidMd5."";
+                        $query = "Update pre_common_wm_card set verifyCodeRemember='".$verifyCodeRemember."' , guessCard='".json_encode($myGuesscardDatabase)."' , starCount=".$starCountAfter."  where uid=".$uidMd5."";
                         $result=$DB->query($query);
                         $wmcardDatabase = json_decode(file_get_contents('cardData.json'), true);//查询卡牌数据
                         $wmcardDataName = array();
@@ -167,7 +169,7 @@ function wmGuessard(){
                     }
                     $myGuesscardDatabase = $myGuesscardObject;
                     $myGuesscardDatabase['isUsed'] = 1;
-                    $query = "Update ".DB_PREFIX."wm_card set guessCard='".json_encode($myGuesscardDatabase)."' , starCount=".$starCountAfter."  where uid=".$uidMd5."";
+                    $query = "Update pre_common_wm_card set guessCard='".json_encode($myGuesscardDatabase)."' , starCount=".$starCountAfter."  where uid=".$uidMd5."";
                     $result=$DB->query($query);
                     $cardJsonData = array('mailMD5'=>md5($uid),'getStar'=>$getStar,'wmAttackNum'=>$wmAttackNum,'time'=>$myGuesscardObject['time'],'massageType'=>'guesscard','type'=>1);
                     wmWriteJson($cardJsonData);
@@ -238,7 +240,7 @@ function creatWmguesscardList(){//生成竞猜卡牌
     }
     return $chainChioseCardId;
 }
-if(isset($_POST['type']) && isset($_POST['uid']) && isset($_POST['cardID'])){
-    wmGuessard();
+if(isset($_POST['type']) && isset($_POST['cardID'])){
+    wmGuessard($_G['uid']);
 }
 ?>

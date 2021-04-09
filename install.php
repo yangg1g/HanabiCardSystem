@@ -1,15 +1,18 @@
 <?php
-if(!defined('EMLOG_ROOT')) {exit('error!');}
+if(!defined('IN_DISCUZ')) {
+	exit('Access Denied');
+}
+
 function callback_init(){
-	$DB = Database::getInstance();
-	$check_table_exist = $DB->query('SHOW TABLES LIKE "'.DB_PREFIX.'wm_card"');
+	$DB = DB::object();
+	$check_table_exist = $DB->query('SHOW TABLES LIKE "pre_common_wm_card"');
 	if($DB->num_rows($check_table_exist) == 0){// 新建数据表
 		$dbcharset = 'utf8mb4';
 		$type = 'MYISAM';
-		$add = $DB->getMysqlVersion() > '4.1' ? "ENGINE=".$type." DEFAULT CHARSET=".$dbcharset.";":"TYPE=".$type.";";
-		$sql = "CREATE TABLE  `".DB_PREFIX."wm_card` (
+		$add = "ENGINE=".$type." DEFAULT CHARSET=".$dbcharset.";";
+		$sql = "CREATE TABLE  `pre_common_wm_card` (
 		`id` mediumint(8) unsigned NOT NULL auto_increment,
-		`uid` int(10) NOT NULL default '0',
+		`uid` varchar(255) NOT NULL default '0',
 		`cardID` longtext NOT NULL,
 		`cardCount` longtext NOT NULL,
 		`timeStamp` bigint(20) NOT NULL,
@@ -34,11 +37,6 @@ function callback_init(){
 	}
 }
 
-function callback_rm(){
-	$wmCard_set=unserialize(ltrim(file_get_contents(dirname(__FILE__).'/wm_card.com.php'),'<?php die; ?>'));
-	if(intval($wmCard_set['delDatabase'])=='1'){
-		$DB = Database::getInstance();
-		$query = $DB->query("DROP TABLE IF EXISTS ".DB_PREFIX."wm_card");
-	}
-}
+callback_init();
+$finish = TRUE;
 ?>
